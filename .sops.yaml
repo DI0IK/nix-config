@@ -1,0 +1,10 @@
+keys:
+  - &yubikey age1yubikey1qt4anxdwj9zvedjxkmra4tgzm0wldmfm0d7hvv7m028klns4wnu9gqdhm5h
+  - &ssh_host age1kxuldsmqwu5u84rut92860kwq7w5xp0app8e9elr9fljxz5ln4xqmfr7ja
+
+creation_rules:
+  - path_regex: secrets/.*\.yaml$
+    key_groups:
+      - age:
+          - *yubikey
+          - *ssh_host
