@@ -8,44 +8,26 @@
 
   networking.hostName = "fw13";
 
-  boot.loader.systemd-boot.enable = true;
+  # lanzaboot instead of GRUB for UEFI booting, with secure settings
+  boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = false;
 
-  users.users.dominik = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
-    hashedPasswordFile = config.sops.secrets.dominik-password.path;
-  };
-
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    users.dominik = import ../../home/dominik/default.nix;
-    extraSpecialArgs = { inherit inputs; };
-  };
-
-  sops = {
-    defaultSopsFile = ../../secrets/secrets.yaml;
-    defaultSopsFormat = "yaml";
-    
-    age.sshKeyPaths = [ "/persist/etc/ssh/ssh_host_ed25519_key" ];
-
-    secrets.dominik-password = {
-      neededForUsers = true;
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/persist/etc/secureboot";
+    autoGenerateKeys.enable = true;
+    autoEnrollKeys = {
+      enable = true;
+      autoReboot = true; 
     };
   };
 
+  # latest stable Linux kernel for better hardware support, especially for newer devices
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  # persist directory for storing all user data
   fileSystems."/persist".neededForBoot = true;
 
   system.stateVersion = "26.05";
-
-  virtualisation.vmVariant = {
-    boot.initrd.secrets."/etc/ssh/ssh_host_ed25519_key" = ../../test_ssh_host_ed25519_key;
-    environment.etc."ssh/ssh_host_ed25519_key".source = ../../test_ssh_host_ed25519_key;
-
-    sops.age.sshKeyPaths = pkgs.lib.mkForce [ "/etc/ssh/ssh_host_ed25519_key" ];
-
-    services.getty.autologinUser = pkgs.lib.mkForce "root";
-  };
 }

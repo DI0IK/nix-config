@@ -69,7 +69,7 @@ sudo chmod 600 "$TARGET_KEY_PATH"
 
 # 5. NixOS Installation
 echo "Starting NixOS installation..."
-sudo nixos-install --flake ".#$TARGET_HOST"
+sudo nixos-install --flake ".#$TARGET_HOST" --no-root-passwd
 
 echo "----------------------------------------------------"
 echo "Installation complete. You can safely reboot $TARGET_HOST now."
