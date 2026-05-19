@@ -3,6 +3,15 @@
 {
   home.packages = with pkgs; [
     git
-    htop
+    btop
+
+    hyprpolkitagent
+    pavucontrol
+    yazi
+    wl-clipboard
+
+    # Utilities
+    brightnessctl
+    playerctl
   ];
 }

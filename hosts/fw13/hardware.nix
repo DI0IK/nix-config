@@ -9,8 +9,12 @@
     "thunderbolt"
     "usbhid"
     "sd_mod"
+
+    "virtio_pci"
+    "virtio_blk"
+    "virtio_scsi"
   ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 

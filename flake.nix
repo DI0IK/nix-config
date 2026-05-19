@@ -21,9 +21,11 @@
     };
 
     impermanence.url = "github:nix-community/impermanence";
+
+    hyprdynamicmonitors.url = "github:fiffeek/hyprdynamicmonitors";
   };
 
-  outputs = { self, nixpkgs, disko, home-manager, sops-nix, impermanence, nixos-hardware, lanzaboote, ... }@inputs:
+  outputs = { self, nixpkgs, disko, home-manager, sops-nix, impermanence, nixos-hardware, lanzaboote, hyprdynamicmonitors, ... }@inputs:
     let
       lib = nixpkgs.lib;
 
@@ -37,6 +39,7 @@
           nixos-hardware.nixosModules.framework-13-7040-amd
           sops-nix.nixosModules.sops
           impermanence.nixosModules.impermanence
+          hyprdynamicmonitors.nixosModules.default
 
           ./hosts/common
           ./hosts/${hostname}
