@@ -48,7 +48,7 @@ if [ ! -b "$DISK_DEVICE" ]; then
 fi
 
 echo "Provisioning disks on $DISK_DEVICE..."
-sudo nix "${NIX_FLAGS[@]}" run github:nix-community/disko -- --mode zap_create_mount "./hosts/$TARGET_HOST/disko.nix" --argstr device "$DISK_DEVICE"
+sudo nix "${NIX_FLAGS[@]}" run github:nix-community/disko -- --mode zap_create_mount "./hosts/$TARGET_HOST/disk.nix" --argstr device "$DISK_DEVICE"
 
 # 4. The Seed: Decrypt SSH Key via YubiKey
 YUBI_STUB=$(mktemp -t yubi-stub.XXXXXX)

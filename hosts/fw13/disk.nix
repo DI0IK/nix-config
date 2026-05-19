@@ -6,7 +6,7 @@
         fsType = "tmpfs";
         mountOptions = [
           "size=4G"
-          "mode=755"
+          "mode=700"
         ];
       };
     };
@@ -50,7 +50,7 @@
                     };
                     "/swap" = {
                       mountpoint = "/.swapvol";
-                      swap.swapfile.size = "16G";
+                      swap.swapfile.size = "34G";
                     };
                   };
                 };

@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    
+
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -19,21 +19,39 @@
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    impermanence.url = "github:nix-community/impermanence";
   };
 
-  outputs = { self, nixpkgs, disko, home-manager, sops-nix, nixos-hardware, lanzaboote, ... }@inputs: {
-    nixosConfigurations.fw13 = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
-      modules = [
-        disko.nixosModules.disko
-        lanzaboote.nixosModules.lanzaboote
-        home-manager.nixosModules.home-manager
-        nixos-hardware.nixosModules.framework-13-7040-amd
-        sops-nix.nixosModules.sops
-        
-        ./hosts/fw13/default.nix
-      ];
+  outputs = { self, nixpkgs, disko, home-manager, sops-nix, impermanence, nixos-hardware, lanzaboote, ... }@inputs:
+    let
+      lib = nixpkgs.lib;
+
+      mkHost = hostname: lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          disko.nixosModules.disko
+          lanzaboote.nixosModules.lanzaboote
+          home-manager.nixosModules.home-manager
+          nixos-hardware.nixosModules.framework-13-7040-amd
+          sops-nix.nixosModules.sops
+          impermanence.nixosModules.impermanence
+
+          ./hosts/common
+          ./hosts/${hostname}
+
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.dominik = import ./home/dominik;
+              extraSpecialArgs = { inherit inputs; };
+            };
+          }
+        ];
+      };
+    in {
+      nixosConfigurations.fw13 = mkHost "fw13";
     };
-  };
 }

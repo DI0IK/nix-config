@@ -1,11 +1,19 @@
 { pkgs, ... }: {
-  home.username = "dominik";
-  home.homeDirectory = "/home/dominik";
-
-  home.stateVersion = "26.05"; 
-
-  home.packages = with pkgs; [
-    git
-    htop
+  imports = [
+    ../../modules/home
   ];
+
+  home.persistence."/persist" = {
+    directories = [
+      "Downloads"
+      "Documents"
+      "Pictures"
+      "Videos"
+      "projects"
+    ];
+
+    files = [
+      ".zsh_history"
+    ];
+  };
 }
