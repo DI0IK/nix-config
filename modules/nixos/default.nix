@@ -1,10 +1,14 @@
 { ... }: {
-  # Catppuccin global theme — matches existing Mocha palette
   catppuccin.enable = true;
   catppuccin.flavor = "mocha";
   catppuccin.accent = "mauve";
 
-  # Theme available to all NixOS sub-modules via module args
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
+
   _module.args.theme = import ../home/theme.nix;
 
   imports = [

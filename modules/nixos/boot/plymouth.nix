@@ -1,5 +1,4 @@
 { ... }: {
-  # Catppuccin-themed Plymouth boot splash
-  # Uses global catppuccin.flavor setting (mocha by default)
+  boot.plymouth.enable = true;
   catppuccin.plymouth.enable = true;
 }
