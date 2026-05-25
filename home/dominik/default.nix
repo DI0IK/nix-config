@@ -3,8 +3,9 @@
     ../../modules/home
   ];
 
-  home.persistence."/persist" = {
+  home.persistence."/persist/home" = {
     directories = [
+      ".librewolf"
       "Downloads"
       "Documents"
       "Pictures"

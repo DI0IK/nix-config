@@ -1,6 +1,13 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, theme, ... }:
 
-{
+let
+  # Fuzzel uses ARGB hex (no leading #) — strip the # and append alpha
+  alpha = "dd";
+  full  = "ff";
+
+  stripHash = s: builtins.substring 1 6 s;
+  argb = color: a: "${stripHash color}${a}";
+in {
   programs.fuzzel = {
     enable = true;
 
@@ -12,17 +19,17 @@
       };
 
       colors = {
-        background = "1e1e2edd";
-        text = "cdd6f4ff";
-        prompt = "bac2deff";
-        placeholder = "7f849cff";
-        input = "cdd6f4ff";
-        match = "89b4faff";
-        selection = "585b70ff";
-        "selection-text" = "cdd6f4ff";  # Quoted because of the hyphen
-        "selection-match" = "89b4faff"; # Quoted because of the hyphen
-        counter = "7f849cff";
-        border = "89b4faff";
+        background        = argb theme.base alpha;
+        text              = argb theme.text full;
+        prompt            = argb theme.subtext1 full;
+        placeholder       = argb theme.overlay1 full;
+        input             = argb theme.text full;
+        match             = argb theme.blue full;
+        selection         = argb theme.surface2 full;
+        "selection-text"  = argb theme.text full;
+        "selection-match" = argb theme.blue full;
+        counter           = argb theme.overlay1 full;
+        border            = argb theme.blue full;
       };
     };
   };

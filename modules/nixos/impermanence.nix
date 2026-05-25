@@ -11,12 +11,15 @@
       "/var/lib/nixos"
       "/var/lib/systemd"
       "/var/lib/greetd"
+      "/etc/ssh"
     ];
 
     files = [
       "/etc/machine-id"
     ];
+  };
 
+  environment.persistence."/persist/home" = {
     users.dominik = {
       directories = [
         ".local/state/pipewire"

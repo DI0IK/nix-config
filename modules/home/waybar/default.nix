@@ -1,5 +1,4 @@
-{ config, lib, pkgs, ... }:
-
+{ config, lib, pkgs, theme, ... }:
 {
   programs.waybar = {
     enable = true;
@@ -10,7 +9,7 @@
         position = "bottom";
         height = 30;
         spacing = 4;
-        
+
         "modules-left" = [ "hyprland/workspaces" ];
         "modules-center" = [ "hyprland/window" ];
         "modules-right" = [
@@ -93,27 +92,25 @@
     };
 
     style = ''
-      /* Catppuccin Mocha Color Palette Definitions */
-      @define-color base #1e1e2e;
-      @define-color mantle #181825;
-      @define-color crust #11111b;
-      @define-color text #cdd6f4;
-      @define-color surface0 #313244;
-      @define-color surface1 #45475a;
-      @define-color overlay0 #6c7086;
-      @define-color red #f38ba8;
-      @define-color pink #f5c2e7;
-      @define-color mauve #cba6f7;
-      @define-color blue #89b4fa;
-      @define-color sapphire #74c7ec;
-      @define-color cyan #89dceb;
-      @define-color teal #94e2d5;
-      @define-color green #a6e3a1;
-      @define-color yellow #f9e2af;
-      @define-color peach #fab387;
-      @define-color maroon #eba0ac;
+      @define-color base     ${theme.base};
+      @define-color mantle   ${theme.mantle};
+      @define-color crust    ${theme.crust};
+      @define-color text     ${theme.text};
+      @define-color surface0 ${theme.surface0};
+      @define-color surface1 ${theme.surface1};
+      @define-color overlay0 ${theme.overlay0};
+      @define-color red      ${theme.red};
+      @define-color pink     ${theme.pink};
+      @define-color mauve    ${theme.mauve};
+      @define-color blue     ${theme.blue};
+      @define-color sapphire ${theme.sapphire};
+      @define-color cyan     ${theme.cyan};
+      @define-color teal     ${theme.teal};
+      @define-color green    ${theme.green};
+      @define-color yellow   ${theme.yellow};
+      @define-color peach    ${theme.peach};
+      @define-color maroon   ${theme.maroon};
 
-      /* Core Style Sheets */
       * {
           border: none;
           border-radius: 4px;

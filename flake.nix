@@ -23,38 +23,27 @@
     impermanence.url = "github:nix-community/impermanence";
 
     hyprdynamicmonitors.url = "github:fiffeek/hyprdynamicmonitors";
+
+    nixpak = {
+      url = "github:nixpak/nixpak";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, home-manager, sops-nix, impermanence, nixos-hardware, lanzaboote, hyprdynamicmonitors, ... }@inputs:
+  outputs = { self, nixpkgs, disko, home-manager, sops-nix, impermanence, nixos-hardware, lanzaboote, hyprdynamicmonitors, nixpak, ... }@inputs:
     let
-      lib = nixpkgs.lib;
-
-      mkHost = hostname: lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          disko.nixosModules.disko
-          lanzaboote.nixosModules.lanzaboote
-          home-manager.nixosModules.home-manager
-          nixos-hardware.nixosModules.framework-13-7040-amd
-          sops-nix.nixosModules.sops
-          impermanence.nixosModules.impermanence
-          hyprdynamicmonitors.nixosModules.default
-
-          ./hosts/common
-          ./hosts/${hostname}
-
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.dominik = import ./home/dominik;
-              extraSpecialArgs = { inherit inputs; };
-            };
-          }
-        ];
-      };
+      root = toString ./.;
+      mkHost = import ./lib/mkHost.nix { inherit inputs root; };
     in {
-      nixosConfigurations.fw13 = mkHost "fw13";
+      nixosConfigurations = {
+        fw13 = mkHost {
+          hostname = "fw13";
+          users = [ "dominik" ];
+          extraModules = [
+            inputs.nixos-hardware.nixosModules.framework-13-7040-amd
+            inputs.hyprdynamicmonitors.nixosModules.default
+          ];
+        };
+      };
     };
 }

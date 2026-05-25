@@ -1,11 +1,13 @@
 { ... }: {
   imports = [
     ./base.nix
-    ./shells
+    ./shells/zsh.nix
     ./packages
     ./hyprland
     ./waybar
     ./mako
     ./fuzzel
+    ./direnv
+    ./librewolf
   ];
 }

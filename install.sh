@@ -15,12 +15,16 @@ export GPG_TTY=$(tty)
 # --- Resource Tracking & Cleanup ---
 TMP_DIR=""
 YUBI_STUB=""
+BORG_SSH_PASS_STUB=""
+BORG_PASS_STUB=""
 PCSCD_PID=""
 
 cleanup() {
     echo -e "\nCleaning up temporary deployment assets..."
     [ -n "${PCSCD_PID:-}" ] && sudo kill "$PCSCD_PID" 2>/dev/null || true
     [ -n "${YUBI_STUB:-}" ] && rm -f "$YUBI_STUB"
+    [ -n "${BORG_SSH_PASS_STUB:-}" ] && rm -f "$BORG_SSH_PASS_STUB"
+    [ -n "${BORG_PASS_STUB:-}" ] && rm -f "$BORG_PASS_STUB"
     [ -d "${TMP_DIR:-}" ] && rm -rf "$TMP_DIR"
 }
 trap cleanup EXIT
@@ -50,7 +54,13 @@ fi
 echo "Provisioning disks on $DISK_DEVICE..."
 sudo nix "${NIX_FLAGS[@]}" run github:nix-community/disko -- --mode zap_create_mount "./hosts/$TARGET_HOST/disk.nix" --argstr device "$DISK_DEVICE"
 
-# 4. The Seed: Decrypt SSH Key via YubiKey
+# 4. Persist configuration for post-reboot access
+PERSIST_REPO="/mnt/persist/nix-config"
+echo "Copying configuration to $PERSIST_REPO..."
+sudo mkdir -p "$(dirname "$PERSIST_REPO")"
+sudo cp -a "$TMP_DIR" "$PERSIST_REPO"
+
+# 5. The Seed: Decrypt SSH Key via YubiKey
 YUBI_STUB=$(mktemp -t yubi-stub.XXXXXX)
 nix "${NIX_FLAGS[@]}" run nixpkgs#age-plugin-yubikey -- --identity > "$YUBI_STUB"
 
@@ -67,7 +77,26 @@ sudo -E SOPS_AGE_KEY_FILE="$YUBI_STUB" nix "${NIX_FLAGS[@]}" shell nixpkgs#sops 
 
 sudo chmod 600 "$TARGET_KEY_PATH"
 
-# 5. NixOS Installation
+# 6. Restore user data from Borg backup
+BORG_REPO="ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./fw13"
+BORG_SSH_PASS_STUB=$(mktemp -t borg-pass.XXXXXX)
+BORG_PASS_STUB=$(mktemp -t borg-pass.XXXXXX)
+
+sudo -E SOPS_AGE_KEY_FILE="$YUBI_STUB" nix "${NIX_FLAGS[@]}" shell nixpkgs#sops -c \
+    sops -d --extract '["borg-ssh-pass"]' "$SECRET_FILE" > "$BORG_SSH_PASS_STUB"
+
+sudo -E SOPS_AGE_KEY_FILE="$YUBI_STUB" nix "${NIX_FLAGS[@]}" shell nixpkgs#sops -c \
+    sops -d --extract '["borg-repo-passphrase"]' "$SECRET_FILE" > "$BORG_PASS_STUB"
+
+echo "Restoring user data from Borg backup..."
+export BORG_RSH="sshpass -f $BORG_SSH_PASS_STUB ssh -o StrictHostKeyChecking=accept-new -p 23"
+BORG_PASSPHRASE=$(cat "$BORG_PASS_STUB") nix "${NIX_FLAGS[@]}" shell nixpkgs#borgbackup nixpkgs#sshpass -c \
+    borg list "$BORG_REPO" > /dev/null 2>&1 && \
+  BORG_PASSPHRASE=$(cat "$BORG_PASS_STUB") nix "${NIX_FLAGS[@]}" shell nixpkgs#borgbackup nixpkgs#sshpass -c \
+    borg extract --destination /mnt "$BORG_REPO"::latest \
+  || echo "No existing Borg backup found — skipping restore."
+
+# 7. NixOS Installation
 echo "Starting NixOS installation..."
 sudo nixos-install --flake ".#$TARGET_HOST" --no-root-passwd
 

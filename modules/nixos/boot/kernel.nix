@@ -35,6 +35,4 @@
     "firewire-core"
   ];
 
-  security.protectKernelImage = true;
-  security.lockKernelModules = true;
 }
