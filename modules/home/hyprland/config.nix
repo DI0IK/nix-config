@@ -58,6 +58,15 @@
           },
       })
 
+      -- ░░░░░░░░░░  MONITORS  ░░░░░░░░░░
+
+      hl.monitor({
+          output   = "",
+          mode     = "preferred",
+          position = "auto",
+          scale    = "auto",
+      })
+
       -- ░░░░░░░░░░  KEYBINDS  ░░░░░░░░░░
 
       hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("uwsm app -- kitty"))
