@@ -20,6 +20,7 @@ lib.nixosSystem {
       home-manager.nixosModules.home-manager
       sops-nix.nixosModules.sops
       impermanence.nixosModules.impermanence
+      catppuccin-nix.nixosModules.catppuccin
     ])
     ++ [
       # Core NixOS module tree (boot, security, services, users, impermanence)

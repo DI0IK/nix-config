@@ -28,9 +28,14 @@
       url = "github:nixpak/nixpak";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    catppuccin-nix = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, home-manager, sops-nix, impermanence, nixos-hardware, lanzaboote, hyprdynamicmonitors, nixpak, ... }@inputs:
+  outputs = { self, nixpkgs, disko, home-manager, sops-nix, impermanence, nixos-hardware, lanzaboote, hyprdynamicmonitors, nixpak, catppuccin-nix, ... }@inputs:
     let
       root = toString ./.;
       mkHost = import ./lib/mkHost.nix { inherit inputs root; };
