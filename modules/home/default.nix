@@ -4,6 +4,7 @@
     ./shells/zsh.nix
     ./packages
     ./hyprland
+    ./kitty
     ./waybar
     ./mako
     ./fuzzel
