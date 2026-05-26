@@ -10,8 +10,6 @@ let
 in
 {
   # === Greetd + ReGreet ===
-  # ReGreet module sets the default_session.command automatically:
-  # dbus-run-session cage -s -d -- regreet
   services.greetd = {
     enable = true;
     settings.default_session = {
@@ -67,10 +65,12 @@ in
     '';
   };
 
-  # Cage (kiosk compositor for ReGreet) needs DRM access
   users.users.greeter.extraGroups = [ "video" ];
 
-  # === Hyprland (unchanged below) ===
+  environment.sessionVariables = {
+    UWSM_SILENT_START = "1";
+  };
+
   programs.hyprland = {
     enable = true;
     withUWSM = true;
