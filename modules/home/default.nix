@@ -10,5 +10,8 @@
     ./fuzzel
     ./direnv
     ./librewolf
+    ./thunderbird
+    ./signal
+    ./zathura
   ];
 }
