@@ -9,10 +9,6 @@
     "thunderbolt"
     "usbhid"
     "sd_mod"
-
-    "virtio_pci"
-    "virtio_blk"
-    "virtio_scsi"
   ];
   boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [ "kvm-amd" ];
@@ -21,4 +17,6 @@
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  boot.initrd.luks.devices.crypted.device = lib.mkForce "/dev/disk/by-uuid/1ae46ce0-719c-412e-991b-9fec7ddb1183";
 }
