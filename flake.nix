@@ -21,8 +21,10 @@
     };
 
     impermanence.url = "github:nix-community/impermanence";
+    impermanence.inputs.nixpkgs.follows = "nixpkgs";
 
     hyprdynamicmonitors.url = "github:fiffeek/hyprdynamicmonitors";
+    hyprdynamicmonitors.inputs.nixpkgs.follows = "nixpkgs";
 
     nixpak = {
       url = "github:nixpak/nixpak";
