@@ -11,6 +11,8 @@
 
   _module.args.theme = import ../home/theme.nix;
 
+  time.timeZone = "Europe/Berlin";
+
   imports = [
     ./boot
     ./security

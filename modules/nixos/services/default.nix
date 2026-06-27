@@ -8,5 +8,6 @@
     ./dns.nix
     ./vpn.nix
     ./snapshots.nix
+    ./gpg.nix
   ];
 }

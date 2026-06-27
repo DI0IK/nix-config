@@ -9,4 +9,8 @@
     extraGroups = [ "wheel" ];
     hashedPasswordFile = config.sops.secrets.dominik-password.path;
   };
+
+  environment.systemPackages = with pkgs; [
+    kitty.terminfo
+  ];
 }

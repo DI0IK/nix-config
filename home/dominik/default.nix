@@ -26,6 +26,7 @@
 
     files = [
       ".zsh_history"
+      ".gitconfig"
     ];
   };
 }
