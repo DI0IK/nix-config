@@ -3,16 +3,18 @@
   services.mako = {
     enable = true;
 
-    backgroundColor = theme.base;
-    textColor = theme.text;
-    borderColor = theme.blue;
-    progressColor = "over ${theme.surface0}";
+    settings = {
+      background-color = theme.base;
+      text-color = theme.text;
+      border-color = theme.blue;
+      progress-color = "over ${theme.surface0}";
 
-    font = "monospace 10";
-    borderRadius = 5;
-    borderSize = 2;
-    padding = "10,15";
-    defaultTimeout = 5000;
+      font = "monospace 10";
+      border-radius = 5;
+      border-size = 2;
+      padding = "10,15";
+      default-timeout = 5000;
+    };
 
     extraConfig = ''
       [urgency=high]
