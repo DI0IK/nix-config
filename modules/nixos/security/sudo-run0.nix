@@ -4,7 +4,7 @@
   security.sudo.enable = false;
 
   security.run0 = {
-    enableSudoAlias = true;
+    enableSudoAlias = false;
     wheelNeedsPassword = true;
   };
 

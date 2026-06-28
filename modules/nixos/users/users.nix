@@ -1,7 +1,25 @@
 { config, pkgs, ... }:
 
 {
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+
+    oh-my-zsh = {
+      enable = true;
+      theme = "robbyrussell";
+      plugins = [
+        "git"
+        "sudo"
+      ];
+    };  
+    
+    shellAliases = {
+      sudo = "run0";
+    };
+  };
 
   users.users.dominik = {
     isNormalUser = true;

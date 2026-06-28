@@ -11,6 +11,8 @@
 
   _module.args.theme = import ../home/theme.nix;
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   time.timeZone = "Europe/Berlin";
 
   imports = [

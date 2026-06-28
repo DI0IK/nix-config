@@ -14,6 +14,7 @@ in
     enable = true;
     settings.default_session = {
       user = "greeter";
+      command = "dbus-run-session ${pkgs.cage}/bin/cage -s -mlast -d -- ${pkgs.regreet}/bin/regreet";
     };
   };
 
@@ -79,6 +80,8 @@ in
   services.hyprdynamicmonitors = {
     enable = true;
   };
+
+  services.upower.enable = true;
 
   security.pam.services.hyprlock = {};
 }

@@ -33,6 +33,10 @@
           animations = {
               enabled = true,
           },
+          misc = {
+            force_default_wallpaper = -1,
+            disable_hyprland_logo = true,
+          }
       })
 
       hl.curve("overshoot", { type = "bezier", points = { {0.05, 0.9}, {0.1, 1.1} } })
@@ -71,7 +75,7 @@
 
       hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("uwsm app -- kitty"))
       hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd("uwsm app -- fuzzel"))
-      hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
+      hl.bind(mainMod .. " + SHIFT + Q",      hl.dsp.window.close())
       hl.bind(mainMod .. " + SPACE",  hl.dsp.window.float({ action = "toggle" }))
       hl.bind(mainMod .. " + F",      hl.dsp.window.fullscreen())
       hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd("loginctl lock-session"))
@@ -87,6 +91,14 @@
           hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
           hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
       end
+
+      -- ░░░░░░░░░░  GESTURES  ░░░░░░░░░░
+
+      hl.gesture({
+        fingers = 3,
+        direction = "horizontal",
+        action = "workspace"
+      })
 
       -- ░░░░░░░░░░  WINDOW RULES  ░░░░░░░░░░
 
