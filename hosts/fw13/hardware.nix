@@ -9,6 +9,7 @@
     "thunderbolt"
     "usbhid"
     "sd_mod"
+    "atkbd"
   ];
   boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [ "kvm-amd" ];
