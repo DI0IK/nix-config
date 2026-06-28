@@ -120,6 +120,63 @@
       hl.on("hyprland.start", function()
           hl.exec_cmd("uwsm app -- ${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent")
       end)
+
+      -- ░░░░░░░░░░  MONITORS  ░░░░░░░░░░
+
+      local function apply_docked(ext_name)
+          hl.monitor({
+              output = ext_name, 
+              mode = "1920x1080@74.55",
+              position = "0x0",
+              scale = 1
+          })
+          hl.monitor({
+              output = "eDP-1",
+              disabled = true
+          })
+      end
+      
+      local function apply_standalone()
+          hl.monitor({
+              output = "eDP-1",
+              mode = "2256x1504@60.00",
+              position = "0x0",
+              scale = 2
+          })
+      end
+      
+      -- 1. Initial State Check (Runs Instantly in Memory)
+      local function init_monitors()
+          local monitors = hl.get_monitors()
+          local ext_name = nil
+      
+          for _, mon in ipairs(monitors) do
+              if mon.description and string.find(mon.description, "ED273") then
+                  ext_name = mon.name
+                  break
+              end
+          end
+      
+          if ext_name then
+              apply_docked(ext_name)
+          else
+              apply_standalone()
+          end
+      end
+      
+      hl.on("hyprland.start", init_monitors)
+      hl.on("config.reloaded", init_monitors)
+      hl.on("monitor.added", function(mon)
+          if mon.description and string.find(mon.description, "ED273") then
+              apply_docked(mon.name)
+          end
+      end)
+      
+      hl.on("monitor.removed", function(mon)
+          if mon.description and string.find(mon.description, "ED273") then
+              apply_standalone()
+          end
+      end)
     '';
   };
 }
