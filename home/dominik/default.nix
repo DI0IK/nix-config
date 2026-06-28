@@ -21,6 +21,7 @@
       ".config/darktable"
       ".local/share/darktable"
       ".local/share/zathura"
+      ".local/share/direnv"
       ".config/libreoffice"
       ".config/mpv"
       ".config/hyprdynamicmonitors"
