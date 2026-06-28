@@ -23,6 +23,7 @@
       ".local/share/zathura"
       ".config/libreoffice"
       ".config/mpv"
+      ".config/hyprdynamicmonitors"
     ];
 
     files = [
