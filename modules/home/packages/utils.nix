@@ -17,4 +17,15 @@
     brightnessctl
     playerctl
   ];
+
+  programs.git = {
+    enable = true;
+    userName = "Dominik Stahl";
+    userEmail = "dominik@samdj.de";
+
+    signing = {
+      key = null;
+      signByDefault = true; 
+    };
+  };
 }

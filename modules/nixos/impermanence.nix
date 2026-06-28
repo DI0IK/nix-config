@@ -19,7 +19,7 @@
     ];
   };
 
-  environment.persistence."/persist/home" = {
+  environment.persistence."/persist" = {
     users.dominik = {
       directories = [
         ".local/state/pipewire"

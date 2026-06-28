@@ -3,7 +3,7 @@
     ../../modules/home
   ];
 
-  home.persistence."/persist/home" = {
+  home.persistence."/persist" = {
     directories = [
       ".librewolf"
       "Downloads"
@@ -12,6 +12,7 @@
       "Videos"
       "projects"
 
+      ".gnupg"
       ".config/Signal"
       ".thunderbird"
       ".config/VSCodium"
@@ -26,7 +27,6 @@
 
     files = [
       ".zsh_history"
-      ".gitconfig"
     ];
   };
 }
