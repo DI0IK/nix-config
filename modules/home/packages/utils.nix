@@ -12,6 +12,7 @@
     libreoffice-fresh
     mpv
     darktable
+    jetbrains.idea-oss
 
     # Utilities
     brightnessctl
@@ -20,8 +21,8 @@
 
   programs.git = {
     enable = true;
-    userName = "Dominik Stahl";
-    userEmail = "dominik@samdj.de";
+    settings.user.name = "Dominik Stahl";
+    settings.user.email = "dominik@samdj.de";
 
     signing = {
       key = null;
