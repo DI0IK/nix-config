@@ -15,5 +15,6 @@
     hyprpolkitagent   # polkit authentication agent
     pavucontrol       # PulseAudio volume control
     hyprdynamicmonitors
+    adwaita-icon-theme
   ];
 }

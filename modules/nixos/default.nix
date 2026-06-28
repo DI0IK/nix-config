@@ -9,6 +9,11 @@
     options = "--delete-older-than 7d";
   };
 
+  console = {
+    font = "Lat2-Terminus16";
+    keyMap = "de";
+  };
+
   _module.args.theme = import ../home/theme.nix;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

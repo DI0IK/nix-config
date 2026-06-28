@@ -19,6 +19,10 @@
     playerctl
   ];
 
+  programs.zoxide.enable = true;
+
+  programs.neovim.enable = true;
+
   programs.git = {
     enable = true;
     settings.user.name = "Dominik Stahl";

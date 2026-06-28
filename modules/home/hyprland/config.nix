@@ -12,6 +12,11 @@
     extraConfig = ''
       local mainMod = "SUPER"
 
+      hl.env("XCURSOR_THEME", "Adwaita")
+      hl.env("XCURSOR_SIZE", "18")
+      hl.env("HYPRCURSOR_THEME", "Adwaita")
+      hl.env("HYPRCURSOR_SIZE", "18")
+
       -- ░░░░░░░░░░  LOOK AND FEEL  ░░░░░░░░░░
 
       hl.config({

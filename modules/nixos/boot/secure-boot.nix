@@ -1,9 +1,13 @@
 { config, lib, ... }:
 
 {
-  boot.loader.systemd-boot.enable = false;
+  boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = false;
+
+  boot.initrd.systemd.extraConfig = ''
+    DefaultEnvironment="KEYMAP=de"
+  '';
 
   boot.lanzaboote = {
     enable = true;
