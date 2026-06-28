@@ -5,10 +5,6 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = false;
 
-  boot.initrd.systemd.extraConfig = ''
-    DefaultEnvironment="KEYMAP=de"
-  '';
-
   boot.lanzaboote = {
     enable = true;
     pkiBundle = "/persist/etc/secureboot";
