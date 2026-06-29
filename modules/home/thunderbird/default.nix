@@ -22,6 +22,10 @@ let
         bind.ro = [
           "/run/current-system/sw/share"
           "/tmp/.X11-unix"
+          "/etc/ssl/certs"
+          "/etc/static/ssl/certs"
+          "/etc/machine-id"
+          "/etc/localtime"
         ];
 
         bind.dev = [
