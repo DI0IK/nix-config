@@ -2,7 +2,14 @@
 
 {
   # Enable libvirtd daemon
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = true;
+    };
+    firewallBackend = "nftables";
+  };
 
   # Install virt-manager (the GUI)
   environment.systemPackages = with pkgs; [

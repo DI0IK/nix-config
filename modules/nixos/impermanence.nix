@@ -11,6 +11,7 @@
       "/var/lib/nixos"
       "/var/lib/systemd"
       "/var/lib/greetd"
+      "/var/lib/libvirt"
       "/etc/ssh"
     ];
 

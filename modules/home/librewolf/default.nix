@@ -39,6 +39,7 @@ let
         "org.freedesktop.DBus" = "talk";
         "org.freedesktop.portal.*" = "talk";
         "org.a11y.Bus" = "talk";
+        "org.mozilla.*" = "own";
       };
     };
   };

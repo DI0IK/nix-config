@@ -12,7 +12,34 @@
     "atkbd"
   ];
   boot.initrd.kernelModules = [ "amdgpu" ];
-  boot.kernelModules = [ "bridge" "tun" "tap" "kvm-amd" ];
+  boot.kernelModules = [ 
+    # KVM & Core Virtualization
+    "kvm-amd" # (or kvm-intel if you change CPUs)
+    "bridge"
+    "tun"
+    "tap"
+
+    # Native NFTables Translation Engine
+    "nf_nat"
+    "nft_nat"
+    "nft_chain_nat"
+    "nft_masq"
+
+    # Stateful Inspection & Rejection
+    "nf_conntrack"
+    "nft_ct"
+    "nft_reject"
+    "nft_reject_ipv4"
+    "nft_reject_ipv6" # Future-proofing for IPv6
+
+    # Traffic Control (TC) Quality of Service & DHCP Fixes
+    "sch_htb"
+    "sch_sfq"
+    "cls_u32"
+    "act_csum"
+    "sch_ingress"     # Future-proofing for VM network throttling
+    "act_police"      # Future-proofing for VM network throttling
+  ];
   boot.extraModulePackages = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
