@@ -23,6 +23,9 @@
       "**/.cache/**"
       "**/Cache/**"
       "**/CachedData/**"
+      "**/projects/**/node_modules/**"
+      "**/projects/**/target/**"
+      "**/projects/**/build/**"
     ];
 
     repo = "ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./fw13";

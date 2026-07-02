@@ -1,4 +1,6 @@
 { ... }: {
+  services.pcscd.enable = true;
+
   imports = [
     ./audio.nix
     ./borgbackup.nix

@@ -25,6 +25,9 @@
       ".config/libreoffice"
       ".config/mpv"
       ".config/hyprdynamicmonitors"
+      ".cache/borg"
+      ".kube"
+      ".config/sops"
     ];
 
     files = [

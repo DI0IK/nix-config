@@ -17,11 +17,16 @@
     # Utilities
     brightnessctl
     playerctl
+  
+    sops
+    age-plugin-yubikey
   ];
 
   programs.zoxide.enable = true;
 
   programs.neovim.enable = true;
+
+  
 
   programs.git = {
     enable = true;
