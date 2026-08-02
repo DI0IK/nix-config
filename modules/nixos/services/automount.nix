@@ -46,5 +46,13 @@
     };
   };
 
+  services.udev.extraRules = ''
+    # Ignore the underlying LUKS drive by UUID
+    ENV{ID_FS_UUID}=="69eb692a-5b5a-495c-97e8-239bf695c6a9", ENV{UDISKS_IGNORE}="1"
+
+    # Ignore the unlocked mapper device
+    KERNEL=="bilder", ENV{UDISKS_IGNORE}="1"
+  '';
+
   services.udisks2.enable = true;
 }
