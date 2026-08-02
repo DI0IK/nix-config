@@ -12,6 +12,7 @@
       "Videos"
       "projects"
 
+      ".gradle"
       ".gnupg"
       ".config/Signal"
       ".thunderbird"
@@ -19,6 +20,9 @@
       ".vscode-oss"
       ".local/share/containers"
       ".config/darktable"
+      ".config/JetBrains"
+      ".local/share/JetBrains"
+      ".cache/JetBrains"
       ".local/share/darktable"
       ".local/share/zathura"
       ".local/share/direnv"

@@ -16,6 +16,7 @@ let
 
         bind.rw = [
           (sloth.concat' sloth.homeDir "/.librewolf")
+          (sloth.concat' sloth.homeDir "/Downloads")
           (sloth.env "XDG_RUNTIME_DIR")
         ];
 
@@ -26,6 +27,8 @@ let
           "/etc/static/ssl/certs"
           "/etc/machine-id"
           "/etc/localtime"
+          "/run/opengl-driver"
+          "/sys"
         ];
 
         bind.dev = [
@@ -39,7 +42,7 @@ let
         "org.freedesktop.DBus" = "talk";
         "org.freedesktop.portal.*" = "talk";
         "org.a11y.Bus" = "talk";
-        "org.mozilla.*" = "own";
+        "org.librewolf.*" = "own";
       };
     };
   };

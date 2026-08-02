@@ -9,10 +9,16 @@
 
     # GUI Applications
     vscodium-fhs
+    antigravity-fhs
     libreoffice-fresh
     mpv
     darktable
-    jetbrains.idea-oss
+    (pkgs.jetbrains.idea.override {
+      vmopts = ''
+        -Dawt.toolkit.name=WLToolkit
+      '';
+    })
+    opencode
 
     # Utilities
     brightnessctl
@@ -26,7 +32,7 @@
 
   programs.neovim.enable = true;
 
-  
+  services.udiskie.enable = true;
 
   programs.git = {
     enable = true;

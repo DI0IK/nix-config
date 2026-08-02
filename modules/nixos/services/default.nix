@@ -3,6 +3,7 @@
 
   imports = [
     ./audio.nix
+    ./automount.nix
     ./borgbackup.nix
     ./display.nix
     ./bluetooth.nix

@@ -26,6 +26,8 @@
       "**/projects/**/node_modules/**"
       "**/projects/**/target/**"
       "**/projects/**/build/**"
+      "**/projects/**/.devenv/**"
+      "**/projects/**/.direnv/**"
     ];
 
     repo = "ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./fw13";

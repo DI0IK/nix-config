@@ -39,6 +39,11 @@
     "act_csum"
     "sch_ingress"     # Future-proofing for VM network throttling
     "act_police"      # Future-proofing for VM network throttling
+
+    "usb_storage" 
+    "uas"
+    "sd_mod"
+    "btusb"
   ];
   boot.extraModulePackages = [ ];
 
