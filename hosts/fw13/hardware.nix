@@ -44,6 +44,17 @@
     "uas"
     "sd_mod"
     "btusb"
+
+    "nvme"
+    "ahci"
+    "sd_mod"
+    "ext4"
+    "btrfs"
+    "exfat"
+    "ntfs3"
+    "dm_crypt"
+    "dm_mod"
+    "fuse"
   ];
   boot.extraModulePackages = [ ];
 

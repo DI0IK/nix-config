@@ -29,6 +29,9 @@ let
           "/etc/localtime"
           "/run/opengl-driver"
           "/sys"
+          "/etc/fonts"
+          (sloth.concat' sloth.homeDir "/.local/share/fonts")
+          (sloth.concat' sloth.homeDir "/.config/fontconfig")
         ];
 
         bind.dev = [
@@ -43,6 +46,7 @@ let
         "org.freedesktop.portal.*" = "talk";
         "org.a11y.Bus" = "talk";
         "org.librewolf.*" = "own";
+        "org.mozilla.*" = "own";
       };
     };
   };

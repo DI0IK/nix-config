@@ -22,6 +22,9 @@ let
         bind.ro = [
           "/run/current-system/sw/share"
           "/tmp/.X11-unix"
+          "/etc/fonts"
+          (sloth.concat' sloth.homeDir "/.local/share/fonts")
+          (sloth.concat' sloth.homeDir "/.config/fontconfig")
         ];
 
         bind.dev = [

@@ -19,6 +19,7 @@
       '';
     })
     opencode
+    cura-appimage
 
     # Utilities
     brightnessctl

@@ -43,7 +43,7 @@
             disable_hyprland_logo = true,
           },
           xwayland = {
-            enabled = false,
+            enabled = true,
           }
       })
 
@@ -99,6 +99,9 @@
           hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
           hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
       end
+
+      hl.bind(mainMod .. " + mouse:272", "movewindow")
+      hl.bind(mainMod .. " + mouse:273", "resizewindow")
 
       -- ░░░░░░░░░░  GESTURES  ░░░░░░░░░░
 
