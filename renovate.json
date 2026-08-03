@@ -7,17 +7,15 @@
     "enabled": true
   },
   "lockFileMaintenance": {
-    "enabled": true
+    "enabled": true,
+    "automerge": true
   },
   "packageRules": [
     {
-      "matchDatasources": [
+      "matchManagers": [
         "nix"
       ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "groupName": "nix flake updates",
       "automerge": true,
       "platformAutomerge": true
     }
