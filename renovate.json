@@ -6,10 +6,18 @@
   "nix": {
     "enabled": true
   },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
     {
-      "matchDatasources": ["nix"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchDatasources": [
+        "nix"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true,
       "platformAutomerge": true
     }
