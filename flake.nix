@@ -48,8 +48,12 @@
           users = [ "dominik" ];
           extraModules = [
             inputs.nixos-hardware.nixosModules.framework-13-7040-amd
-            inputs.hyprdynamicmonitors.nixosModules.default
           ];
+        };
+
+        homelab = mkHost {
+          hostname = "homelab";
+          users = [ "dominik" ];
         };
       };
     };

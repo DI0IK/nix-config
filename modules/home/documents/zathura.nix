@@ -41,5 +41,9 @@ let
     };
   };
 in {
+  home.persistence."/persist".directories = [
+    ".local/share/zathura"
+  ];
+
   home.packages = [ sandboxed.config.env ];
 }

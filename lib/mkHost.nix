@@ -7,7 +7,11 @@
 let
   inherit (inputs) nixpkgs;
   lib = nixpkgs.lib;
-  theme = import (root + "/modules/home/theme.nix");
+  theme = import (root + "/modules/shared/theme.nix");
+  homeUsers = builtins.listToAttrs (map (name: {
+    inherit name;
+    value = import (root + "/home/${name}/${hostname}.nix");
+  }) users);
 in
 lib.nixosSystem {
   inherit system;
@@ -21,9 +25,10 @@ lib.nixosSystem {
       sops-nix.nixosModules.sops
       impermanence.nixosModules.impermanence
       catppuccin-nix.nixosModules.catppuccin
+      hyprdynamicmonitors.nixosModules.default
     ])
     ++ [
-      # Core NixOS module tree (boot, security, services, users, impermanence)
+      # Core NixOS module tree (boot, security, users, impermanence)
       (root + "/modules/nixos")
 
       # Theme available to all NixOS modules via module args
@@ -32,16 +37,13 @@ lib.nixosSystem {
       # Host identity + overrides
       (root + "/hosts/${hostname}")
 
-      # Home-manager for listed users
       {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
           extraSpecialArgs = { inherit inputs theme; };
-          users = builtins.listToAttrs (map (u: {
-            name = u;
-            value = import (root + "/home/" + u);
-          }) users);
+          sharedModules = [ inputs.impermanence.homeManagerModules.impermanence ];
+          users = homeUsers;
         };
       }
     ]

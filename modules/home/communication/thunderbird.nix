@@ -1,4 +1,4 @@
-{ pkgs, lib, config, inputs, ... }:
+{ pkgs, lib, inputs, ... }:
 
 let
   mkNixPak = inputs.nixpak.lib.nixpak {
@@ -8,15 +8,14 @@ let
 
   sandboxed = mkNixPak {
     config = { sloth, ... }: {
-      app.package = pkgs.librewolf;
-      flatpak.appId = "io.gitlab.librewolf";
+      app.package = pkgs.thunderbird;
+      flatpak.appId = "org.mozilla.Thunderbird";
 
       bubblewrap = {
         network = true;
 
         bind.rw = [
-          (sloth.concat' sloth.homeDir "/.librewolf")
-          (sloth.concat' sloth.homeDir "/Downloads")
+          (sloth.concat' sloth.homeDir "/.thunderbird")
           (sloth.env "XDG_RUNTIME_DIR")
         ];
 
@@ -27,11 +26,6 @@ let
           "/etc/static/ssl/certs"
           "/etc/machine-id"
           "/etc/localtime"
-          "/run/opengl-driver"
-          "/sys"
-          "/etc/fonts"
-          (sloth.concat' sloth.homeDir "/.local/share/fonts")
-          (sloth.concat' sloth.homeDir "/.config/fontconfig")
         ];
 
         bind.dev = [
@@ -45,16 +39,16 @@ let
         "org.freedesktop.DBus" = "talk";
         "org.freedesktop.portal.*" = "talk";
         "org.a11y.Bus" = "talk";
-        "org.librewolf.*" = "own";
-        "org.mozilla.*" = "own";
       };
     };
   };
 in {
-  programs.librewolf = {
-    enable = true;
-    package = lib.mkForce null;
-  };
+  home.persistence."/persist".directories = [
+    ".thunderbird"
+  ];
 
-  home.packages = [ sandboxed.config.env ];
+  programs.thunderbird = {
+    enable = true;
+    package = sandboxed.config.env;
+  };
 }

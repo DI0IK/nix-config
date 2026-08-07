@@ -18,6 +18,10 @@ in
     };
   };
 
+  environment.persistence."/persist".directories = [
+    "/var/lib/greetd"
+  ];
+
   programs.regreet = {
     enable = true;
 

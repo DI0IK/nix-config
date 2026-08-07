@@ -8,7 +8,7 @@
     config.global.hide_env_diff = true;
   };
 
-  home.packages = [
-    pkgs.devenv
+  home.persistence."/persist".directories = [
+    ".local/share/direnv"
   ];
 }

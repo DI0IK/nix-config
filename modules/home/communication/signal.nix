@@ -42,5 +42,9 @@ let
     };
   };
 in {
+  home.persistence."/persist".directories = [
+    ".config/Signal"
+  ];
+
   home.packages = [ sandboxed.config.env ];
 }

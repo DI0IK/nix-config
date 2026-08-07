@@ -14,8 +14,8 @@
         "git"
         "sudo"
       ];
-    };  
-    
+    };
+
     shellAliases = {
       sudo = "run0";
     };
@@ -27,7 +27,6 @@
     extraGroups = [ "wheel" ];
     hashedPasswordFile = config.sops.secrets.dominik-password.path;
   };
-
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
