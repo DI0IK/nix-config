@@ -1,4 +1,4 @@
-{ ... }: {
+{ pkgs, ... }: {
   imports = [
     ../../modules/home/development/git.nix
     ../../modules/home/shell/zoxide.nix
