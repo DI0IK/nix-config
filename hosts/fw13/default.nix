@@ -9,10 +9,12 @@
     ../../modules/nixos/services/containers.nix
     ../../modules/nixos/services/display.nix
     ../../modules/nixos/services/dns.nix
+    ../../modules/nixos/services/gpg.nix
     ../../modules/nixos/services/smartcards.nix
     ../../modules/nixos/services/snapshots.nix
     ../../modules/nixos/services/virt.nix
     ../../modules/nixos/services/vpn.nix
+    ../../modules/nixos/theme.nix
 
     ../../modules/nixos/boot/secure-boot.nix
   ];

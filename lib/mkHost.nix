@@ -42,7 +42,6 @@ lib.nixosSystem {
           useGlobalPkgs = true;
           useUserPackages = true;
           extraSpecialArgs = { inherit inputs theme; };
-          sharedModules = [ inputs.impermanence.homeManagerModules.impermanence ];
           users = homeUsers;
         };
       }

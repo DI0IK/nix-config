@@ -1,13 +1,13 @@
 { pkgs, ... }: {
   imports = [
     ./common.nix
+    ../../modules/home/base.nix
     ../../modules/home/browsers/librewolf.nix
     ../../modules/home/communication/signal.nix
     ../../modules/home/communication/thunderbird.nix
     ../../modules/home/desktop/fuzzel.nix
     ../../modules/home/desktop/kitty.nix
     ../../modules/home/desktop/mako.nix
-    ../../modules/home/desktop/theme.nix
     ../../modules/home/desktop/udiskie.nix
     ../../modules/home/desktop/waybar.nix
     ../../modules/home/development/neovim.nix
@@ -38,9 +38,6 @@
       ".kube"
     ];
 
-    files = [
-      ".zsh_history"
-    ];
   };
 
   home.packages = with pkgs; [
