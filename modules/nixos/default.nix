@@ -1,8 +1,4 @@
 { ... }: {
-  catppuccin.enable = true;
-  catppuccin.flavor = "mocha";
-  catppuccin.accent = "mauve";
-
   nix.gc = {
     automatic = true;
     dates = "weekly";
@@ -14,9 +10,10 @@
     keyMap = "de";
   };
 
-  _module.args.theme = import ../home/theme.nix;
-
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   nixpkgs.config.allowUnfree = true;
 
@@ -25,7 +22,7 @@
   imports = [
     ./boot
     ./security
-    ./services
+    ./sops.nix
     ./users/users.nix
     ./impermanence.nix
   ];

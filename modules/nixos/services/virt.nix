@@ -18,4 +18,8 @@
 
   # Manage nested virtualization or specific spice protocols (Optional but recommended)
   virtualisation.spiceUSBRedirection.enable = true;
+
+  environment.persistence."/persist".directories = [
+    "/var/lib/libvirt"
+  ];
 }

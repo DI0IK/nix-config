@@ -1,4 +1,8 @@
-{ device ? "/dev/nvme0n1", ... }: {
+{
+  device ? "/dev/nvme0n1",
+  ...
+}:
+{
   disko.devices = {
     nodev = {
       "/" = {
@@ -42,15 +46,24 @@
                   subvolumes = {
                     "/persist" = {
                       mountpoint = "/persist";
-                      mountOptions = [ "compress=zstd" "noatime" ];
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
                     };
                     "/store" = {
                       mountpoint = "/nix";
-                      mountOptions = [ "compress=zstd" "noatime" ];
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
                     };
                     "/swap" = {
                       mountpoint = "/.swapvol";
-                      mountOptions = [ "noatime" "nodatacow" ];
+                      mountOptions = [
+                        "noatime"
+                        "nodatacow"
+                      ];
                       swap.swapfile.size = "34G";
                     };
                   };

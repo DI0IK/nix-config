@@ -1,5 +1,14 @@
-{ pkgs, lib, theme, ... }:
 {
+  pkgs,
+  lib,
+  theme,
+  ...
+}:
+{
+  programs.wlogout = {
+    enable = true;
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
 
@@ -88,6 +97,7 @@
       hl.bind(mainMod .. " + F",      hl.dsp.window.fullscreen())
       hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd("loginctl lock-session"))
       hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("uwsm stop"))
+      hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("wlogout"))
 
       hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
       hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
@@ -138,7 +148,7 @@
               disabled = true
           })
       end
-      
+
       local function apply_standalone()
           hl.monitor({
               output = "eDP-1",
@@ -147,26 +157,26 @@
               scale = 2
           })
       end
-      
+
       -- 1. Initial State Check (Runs Instantly in Memory)
       local function init_monitors()
           local monitors = hl.get_monitors()
           local ext_name = nil
-      
+
           for _, mon in ipairs(monitors) do
               if mon.description and string.find(mon.description, "ED273") then
                   ext_name = mon.name
                   break
               end
           end
-      
+
           if ext_name then
               apply_docked(ext_name)
           else
               apply_standalone()
           end
       end
-      
+
       hl.on("hyprland.start", init_monitors)
       hl.on("config.reloaded", init_monitors)
       hl.on("monitor.added", function(mon)
@@ -174,7 +184,7 @@
               apply_docked(mon.name)
           end
       end)
-      
+
       hl.on("monitor.removed", function(mon)
           if mon.description and string.find(mon.description, "ED273") then
               apply_standalone()

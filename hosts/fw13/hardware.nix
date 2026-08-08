@@ -1,9 +1,15 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  boot.initrd.availableKernelModules = [ 
+  boot.initrd.availableKernelModules = [
     "nvme"
     "xhci_pci"
     "thunderbolt"
@@ -12,7 +18,7 @@
     "atkbd"
   ];
   boot.initrd.kernelModules = [ "amdgpu" ];
-  boot.kernelModules = [ 
+  boot.kernelModules = [
     # KVM & Core Virtualization
     "kvm-amd" # (or kvm-intel if you change CPUs)
     "bridge"
@@ -37,10 +43,10 @@
     "sch_sfq"
     "cls_u32"
     "act_csum"
-    "sch_ingress"     # Future-proofing for VM network throttling
-    "act_police"      # Future-proofing for VM network throttling
+    "sch_ingress" # Future-proofing for VM network throttling
+    "act_police" # Future-proofing for VM network throttling
 
-    "usb_storage" 
+    "usb_storage"
     "uas"
     "sd_mod"
     "btusb"
@@ -62,6 +68,7 @@
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-  boot.initrd.luks.devices.crypted.device = lib.mkForce "/dev/disk/by-uuid/1ae46ce0-719c-412e-991b-9fec7ddb1183";
+  boot.initrd.luks.devices.crypted.device =
+    lib.mkForce "/dev/disk/by-uuid/1ae46ce0-719c-412e-991b-9fec7ddb1183";
   fileSystems."/boot".device = lib.mkForce "/dev/disk/by-uuid/0DD7-2C90";
 }

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   # Catppuccin Mocha Mauve GTK theme for ReGreet's UI widgets
@@ -18,7 +23,11 @@ in
     };
   };
 
-  programs.regreet = {
+  environment.persistence."/persist".directories = [
+    "/var/lib/greetd"
+  ];
+
+  services.displayManager.regreet = {
     enable = true;
 
     # Catppuccin Mocha Mauve theme for the login widgets
@@ -39,8 +48,14 @@ in
       greeting = "";
       clock = true;
       commands = {
-        reboot = [ "systemctl" "reboot" ];
-        poweroff = [ "systemctl" "poweroff" ];
+        reboot = [
+          "systemctl"
+          "reboot"
+        ];
+        poweroff = [
+          "systemctl"
+          "poweroff"
+        ];
       };
     };
 
@@ -70,6 +85,11 @@ in
 
   environment.sessionVariables = {
     UWSM_SILENT_START = "1";
+    NIXOS_OZONE_WL = "1";
+    MOZ_ENABLE_WAYLAND = "1";
+    QT_QPA_PLATFORM = "wayland;xcb";
+    SDL_VIDEODRIVER = "wayland";
+    JAVA_TOOL_OPTIONS = "-Dawt.toolkit.name=WLToolkit";
   };
 
   programs.hyprland = {
@@ -77,11 +97,7 @@ in
     withUWSM = true;
   };
 
-  services.hyprdynamicmonitors = {
-    enable = true;
-  };
-
   services.upower.enable = true;
 
-  security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
 }

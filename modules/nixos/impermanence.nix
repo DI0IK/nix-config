@@ -1,5 +1,4 @@
-{ config, ... }:
-
+{ ... }:
 {
   fileSystems."/persist".neededForBoot = true;
 
@@ -10,22 +9,11 @@
       "/var/log"
       "/var/lib/nixos"
       "/var/lib/systemd"
-      "/var/lib/greetd"
-      "/var/lib/libvirt"
       "/etc/ssh"
     ];
 
     files = [
       "/etc/machine-id"
     ];
-  };
-
-  environment.persistence."/persist" = {
-    users.dominik = {
-      directories = [
-        ".local/state/pipewire"
-        ".local/state/wireplumber"
-      ];
-    };
   };
 }
