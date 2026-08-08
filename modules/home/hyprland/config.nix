@@ -1,5 +1,9 @@
 { pkgs, lib, theme, ... }:
 {
+  programs.wlogout = {
+    enable = true;
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
 
@@ -88,6 +92,7 @@
       hl.bind(mainMod .. " + F",      hl.dsp.window.fullscreen())
       hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd("loginctl lock-session"))
       hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("uwsm stop"))
+      hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("wlogout"))
 
       hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
       hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
