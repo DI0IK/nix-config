@@ -3,9 +3,10 @@ set -euo pipefail
 
 # --- Configuration ---
 REPO_URL="https://github.com/di0ik/nix-config"
-TARGET_HOST="fw13"
-SECRET_FILE="secrets/secrets.yaml" 
-DISK_DEVICE="/dev/nvme0n1"
+TARGET_HOST="${TARGET_HOST:-fw13}"
+SECRET_FILE="secrets/secrets.yaml"
+DISK_DEVICE="${DISK_DEVICE:-/dev/nvme0n1}"
+BORG_REPO="ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./${TARGET_HOST}"
 
 # Use a Bash array for experimental flags to handle whitespace safely
 NIX_FLAGS=(--extra-experimental-features "nix-command flakes")
@@ -78,7 +79,6 @@ sudo -E SOPS_AGE_KEY_FILE="$YUBI_STUB" nix "${NIX_FLAGS[@]}" shell nixpkgs#sops 
 sudo chmod 600 "$TARGET_KEY_PATH"
 
 # 6. Restore user data from Borg backup
-BORG_REPO="ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./fw13"
 BORG_SSH_PASS_STUB=$(mktemp -t borg-pass.XXXXXX)
 BORG_PASS_STUB=$(mktemp -t borg-pass.XXXXXX)
 

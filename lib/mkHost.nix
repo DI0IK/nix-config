@@ -1,17 +1,20 @@
 { inputs, root }:
-{ hostname
-, system ? "x86_64-linux"
-, users ? [ ]
-, extraModules ? [ ]
+{
+  hostname,
+  system ? "x86_64-linux",
+  users ? [ ],
+  extraModules ? [ ],
 }:
 let
   inherit (inputs) nixpkgs;
   lib = nixpkgs.lib;
   theme = import (root + "/modules/shared/theme.nix");
-  homeUsers = builtins.listToAttrs (map (name: {
-    inherit name;
-    value = import (root + "/home/${name}/${hostname}.nix");
-  }) users);
+  homeUsers = builtins.listToAttrs (
+    map (name: {
+      inherit name;
+      value = import (root + "/home/${name}/${hostname}.nix");
+    }) users
+  );
 in
 lib.nixosSystem {
   inherit system;
@@ -25,7 +28,6 @@ lib.nixosSystem {
       sops-nix.nixosModules.sops
       impermanence.nixosModules.impermanence
       catppuccin-nix.nixosModules.catppuccin
-      hyprdynamicmonitors.nixosModules.default
     ])
     ++ [
       # Core NixOS module tree (boot, security, users, impermanence)

@@ -1,4 +1,9 @@
-{ pkgs, lib, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 let
   mkNixPak = inputs.nixpak.lib.nixpak {
@@ -40,7 +45,8 @@ let
       };
     };
   };
-in {
+in
+{
   home.persistence."/persist".directories = [
     ".local/share/zathura"
   ];

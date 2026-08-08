@@ -1,5 +1,6 @@
 { pkgs, ... }: {
   imports = [
+    ../../modules/home/base.nix
     ../../modules/home/development/git.nix
     ../../modules/home/shell/zoxide.nix
     ../../modules/home/shell/zsh.nix
@@ -10,6 +11,7 @@
     directories = [
       ".cache/borg"
       ".config/sops"
+      ".local/share/containers"
     ];
 
     files = [

@@ -1,5 +1,8 @@
 { ... }: {
-  boot.loader.systemd-boot.configurationLimit = 10;
+  boot.loader.systemd-boot = {
+    enable = true;
+    configurationLimit = 10;
+  };
 
   imports = [
     ./kernel.nix

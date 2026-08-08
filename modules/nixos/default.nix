@@ -10,7 +10,10 @@
     keyMap = "de";
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   nixpkgs.config.allowUnfree = true;
 
@@ -19,6 +22,7 @@
   imports = [
     ./boot
     ./security
+    ./sops.nix
     ./users/users.nix
     ./impermanence.nix
   ];

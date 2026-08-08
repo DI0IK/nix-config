@@ -6,7 +6,7 @@
 
     signing = {
       key = null;
-      signByDefault = true; 
+      signByDefault = true;
     };
   };
 }

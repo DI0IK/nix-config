@@ -1,4 +1,10 @@
-{ config, lib, pkgs, theme, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  theme,
+  ...
+}:
 {
   programs.waybar = {
     enable = true;
@@ -10,7 +16,10 @@
         height = 30;
         spacing = 4;
 
-        "modules-left" = [ "hyprland/workspaces" "hyprland/submap" ];
+        "modules-left" = [
+          "hyprland/workspaces"
+          "hyprland/submap"
+        ];
         "modules-center" = [ "hyprland/window" ];
         "modules-right" = [
           "idle_inhibitor"
@@ -61,12 +70,26 @@
         temperature = {
           "critical-threshold" = 80;
           format = "{temperatureC}°C {icon}";
-          "format-icons" = ["" "" ""];
+          "format-icons" = [
+            ""
+            ""
+            ""
+          ];
         };
 
         backlights = {
           format = "{percent}% {icon}";
-          "format-icons" = ["" "" "" "" "" "" "" "" ""]; 
+          "format-icons" = [
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
         };
 
         battery = {
@@ -79,7 +102,18 @@
           "format-charging" = "{capacity}% 󰂄";
           "format-plugged" = "{capacity}% 󱟢";
           "format-alt" = "{time} {icon}";
-          "format-icons" = ["󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
+          "format-icons" = [
+            "󰁺"
+            "󰁻"
+            "󰁼"
+            "󰁽"
+            "󰁾"
+            "󰁿"
+            "󰂀"
+            "󰂁"
+            "󰂂"
+            "󰁹"
+          ];
         };
 
         power-profiles-daemon = {
@@ -110,7 +144,10 @@
             "phone-muted" = "";
             "portable" = "";
             "car" = "";
-            "default" = ["" ""];
+            "default" = [
+              ""
+              ""
+            ];
           };
           "scroll-step" = 1;
         };
@@ -288,12 +325,12 @@
           background-color: @sapphire;
           color: @mantle;
       }
-      
+
       #backlight {
           background-color: @teal;
           color: @mantle;
       }
-      
+
       #battery {
           background-color: @green;
           color: @mantle;
@@ -306,32 +343,32 @@
           background-color: @maroon;
           color: @mantle;
       }
-      
+
       #disk {
           background-color: @flamingo;
           color: @mantle;
       }
-      
+
       #network {
           background-color: @peach;
           color: @mantle;
       }
-      
+
       #network.disconnected {
           background-color: red;
           color: @mantle;
       }
-      
+
       #bluetooth {
           background-color: @maroon;
           color: @mantle;
       }
-      
+
       #pulseaudio {
           background-color: @yellow;
           color: @mantle;
       }
-      
+
       #pulseaudio.muted {
           background-color: red;
           color: @mantle;
@@ -340,36 +377,36 @@
           background-color: @pink;
           color: @mantle;
       }
-      
+
       #temperature.critical {
           background-color: red;
           color: @mantle;
       }
-      
+
       #mpris {
           background-color: @base;
           color: @text;
       }
-      
+
       #tray {
           background-color: @overlay0;
           color: @text;
       }
-      
+
       #tray > .passive {
           -gtk-icon-effect: dim;
       }
-      
+
       #tray > .needs-attention {
           -gtk-icon-effect: highlight;
           background-color: @mantle;
       }
-      
+
       #idle_inhibitor {
           background-color: @base;
           color: @text;
       }
-      
+
       #idle_inhibitor.activated {
           background-color: @text;
           color: @base;
@@ -382,16 +419,16 @@
           background-color: @green;
           color: @mantle;
       }
-      
+
       #scratchpad {
           background-color: @base;
           color: @text;
       }
-      
+
       #scratchpad.empty {
           background-color: transparent;
       }
-      
+
       #custom-timetracker {
           /* Use mauve for the background when the module is present but not in a specific state, 
              or mantle if you want a dark background that matches the bar. */
@@ -399,26 +436,26 @@
           color: @text;
           padding: 0 10px;
       }
-      
+
       #custom-timetracker.running {
           /* Bright green for active tracking */
           background-color: @green;
           color: @base; /* Black text on green background */
           font-weight: bold;
       }
-      
+
       #custom-timetracker.inactive {
           /* Mauve accent when the timer is off (Clock In) */
           background-color: @mauve;
           color: @base; /* Black text on mauve background */
       }
-      
+
       #custom-timetracker.error {
           /* Red for corrupted state */
           background-color: @red;
           color: @base;
       }
-      
+
       #custom-timetracker.paused {
         /* Yellow for paused state */
         background-color: @yellow;

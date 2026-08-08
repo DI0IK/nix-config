@@ -1,7 +1,6 @@
 { pkgs, ... }: {
   imports = [
     ./common.nix
-    ../../modules/home/base.nix
     ../../modules/home/browsers/librewolf.nix
     ../../modules/home/communication/signal.nix
     ../../modules/home/communication/thunderbird.nix
@@ -12,6 +11,7 @@
     ../../modules/home/desktop/waybar.nix
     ../../modules/home/development/neovim.nix
     ../../modules/home/development/vscode.nix
+    ../../modules/home/documents/zathura.nix
     ../../modules/home/hyprland
     ../../modules/home/shell/direnv.nix
   ];
@@ -32,7 +32,6 @@
       ".local/share/JetBrains"
       ".cache/JetBrains"
       ".local/share/darktable"
-      ".local/share/zathura"
       ".config/libreoffice"
       ".config/mpv"
       ".kube"
@@ -42,7 +41,7 @@
 
   home.packages = with pkgs; [
     wl-clipboard
-    antigravity-fhs
+    antigravity-ide-fhs
     libreoffice-fresh
     mpv
     darktable

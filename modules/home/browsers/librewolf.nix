@@ -1,4 +1,10 @@
-{ pkgs, lib, config, inputs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  inputs,
+  ...
+}:
 
 let
   mkNixPak = inputs.nixpak.lib.nixpak {
@@ -50,7 +56,8 @@ let
       };
     };
   };
-in {
+in
+{
   home.persistence."/persist".directories = [
     ".librewolf"
   ];

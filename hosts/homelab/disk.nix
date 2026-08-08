@@ -1,4 +1,7 @@
-{ disks ? [ "/dev/vda" ], ... }:
+{
+  disks ? [ "/dev/vda" ],
+  ...
+}:
 
 {
   disko.devices = {
@@ -11,12 +14,6 @@
           type = "gpt";
 
           partitions = {
-            bios = {
-              name = "bios";
-              size = "1M";
-              type = "EF02";
-            };
-
             ESP = {
               name = "ESP";
               size = "1G";
@@ -62,14 +59,6 @@
                       "noatime"
                     ];
                   };
-
-                  "@log" = {
-                    mountpoint = "/var/log";
-                    mountOptions = [
-                      "compress=zstd"
-                      "noatime"
-                    ];
-                  };
                 };
               };
             };
@@ -80,6 +69,7 @@
 
     nodev = {
       "/" = {
+        type = "nodev";
         fsType = "tmpfs";
         mountOptions = [
           "defaults"
