@@ -16,6 +16,6 @@
       "**/cache/**"
     ];
 
-    repo = "ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./homelab";
+    repo = "ssh://u599352-sub3@u599352-sub3.your-storagebox.de:23/./";
   };
 }
