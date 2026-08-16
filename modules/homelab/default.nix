@@ -14,4 +14,6 @@
   homelab.wireguard.enable = true;
 
   homelab.apps.authentik.enable = true;
+  homelab.apps.homeassistant.enable = true;
+  homelab.apps.mosquitto.enable = true;
 }
