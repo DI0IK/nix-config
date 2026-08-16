@@ -9,6 +9,7 @@ HOST_FILE="secrets/${TARGET_HOST}.yaml"
 DISK_DEVICE="${DISK_DEVICE:-/dev/nvme0n1}"
 BORG_USER="u599352-sub2"
 [ "$TARGET_HOST" = "homelab" ] && BORG_USER="u599352-sub3"
+[ "$TARGET_HOST" = "gateway" ] && BORG_USER="u599352-sub4"
 BORG_REPO="ssh://${BORG_USER}@${BORG_USER}.your-storagebox.de:23/./${TARGET_HOST}"
 
 # Use a Bash array for experimental flags to handle whitespace safely

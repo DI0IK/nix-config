@@ -2,6 +2,7 @@ keys:
   - &yubikey age1yubikey1qt4anxdwj9zvedjxkmra4tgzm0wldmfm0d7hvv7m028klns4wnu9gqdhm5h
   - &fw13 age1kxuldsmqwu5u84rut92860kwq7w5xp0app8e9elr9fljxz5ln4xqmfr7ja
   - &homelab age1n2nc8va6c7d9hd2jy8l6vlet8ahmhf8kwaj0ymsh220z2plavuas0fdvqw
+  - &gateway age1qe0s3t4d6ezn9zrjh2nwwwugj34lvtsufsx7j8xs3hmc7pl609lsrz0z58
 
 creation_rules:
   - path_regex: secrets/common\.yaml$
@@ -10,6 +11,7 @@ creation_rules:
           - *yubikey
           - *fw13
           - *homelab
+          - *gateway
   - path_regex: secrets/fw13\.yaml$
     key_groups:
       - age:
@@ -20,3 +22,8 @@ creation_rules:
       - age:
           - *yubikey
           - *homelab
+  - path_regex: secrets/gateway\.yaml$
+    key_groups:
+      - age:
+          - *yubikey
+          - *gateway

@@ -75,6 +75,11 @@
             authentik-nix.nixosModules.default
           ];
         };
+
+        gateway = mkHost {
+          hostname = "gateway";
+          users = [ "dominik" ];
+        };
       };
 
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt;
