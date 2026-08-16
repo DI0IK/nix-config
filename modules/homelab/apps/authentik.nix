@@ -14,11 +14,13 @@ let
   appOptionType = types.submodule {
     options = {
       type = lib.mkOption {
-        type = types.nullOr (types.enum [
-          "forward-auth"
-          "oidc"
-          "oidc-public"
-        ]);
+        type = types.nullOr (
+          types.enum [
+            "forward-auth"
+            "oidc"
+            "oidc-public"
+          ]
+        );
         default = null;
         description = "Provider type: forward-auth (proxy), oidc (confidential OAuth2), or oidc-public";
       };
@@ -79,18 +81,20 @@ let
       };
 
       redirectUris = lib.mkOption {
-        type = types.listOf (types.submodule {
-          options = {
-            url = lib.mkOption { type = types.str; };
-            matching_mode = lib.mkOption {
-              type = types.enum [
-                "strict"
-                "regex"
-              ];
-              default = "strict";
+        type = types.listOf (
+          types.submodule {
+            options = {
+              url = lib.mkOption { type = types.str; };
+              matching_mode = lib.mkOption {
+                type = types.enum [
+                  "strict"
+                  "regex"
+                ];
+                default = "strict";
+              };
             };
-          };
-        });
+          }
+        );
         default = [ ];
         description = "OAuth2 redirect URIs";
       };
@@ -123,35 +127,63 @@ let
 
   resolveApp = app: {
     inherit (app)
-      name roleGroups extraGroups externalHost accessTokenValidity
-      clientId clientSecret redirectUris scopes extraEntries rawBlueprint
+      name
+      type
+      roleGroups
+      extraGroups
+      externalHost
+      accessTokenValidity
+      clientId
+      clientSecret
+      redirectUris
+      scopes
+      extraEntries
+      rawBlueprint
       ;
-    slug = if app.slug != null then app.slug else lib.toLower (lib.replaceStrings [ " " ] [ "-" ] app.name);
+    slug =
+      if app.slug != null then app.slug else lib.toLower (lib.replaceStrings [ " " ] [ "-" ] app.name);
     group = if app.group != null then app.group else app.name;
   };
 
-  generateBlueprint = appName: rawApp:
-    let app = resolveApp rawApp;
+  generateBlueprint =
+    appName: rawApp:
+    let
+      app = resolveApp rawApp;
     in
     if app.rawBlueprint != null then
       app.rawBlueprint
     else if app.type == "forward-auth" then
       helpers.mkForwardAuthBlueprint {
-        inherit (app) name slug group accessTokenValidity extraEntries;
+        inherit (app)
+          name
+          slug
+          group
+          accessTokenValidity
+          extraEntries
+          ;
         externalHost = app.externalHost;
       }
     else
       helpers.mkOidcBlueprint {
         inherit (app)
-          name slug clientId clientSecret redirectUris scopes
-          group roleGroups accessTokenValidity extraEntries
+          name
+          slug
+          clientId
+          clientSecret
+          redirectUris
+          scopes
+          group
+          roleGroups
+          accessTokenValidity
+          extraEntries
           ;
       };
 
   activeApps = lib.filterAttrs (_: app: app.rawBlueprint != null || app.type != null) cfg.apps;
   allBlueprints = lib.mapAttrs generateBlueprint activeApps;
 
-  blueprintFiles = lib.mapAttrs' (name: content:
+  blueprintFiles = lib.mapAttrs' (
+    name: content:
     lib.nameValuePair "${name}.yaml" {
       text = content;
     }
@@ -226,7 +258,8 @@ in
       mode = "0400";
     };
 
-    environment.etc = lib.mapAttrs' (filename: fileDef:
+    environment.etc = lib.mapAttrs' (
+      filename: fileDef:
       lib.nameValuePair "authentik-blueprints/${filename}" {
         text = fileDef.text;
         group = "authentik";

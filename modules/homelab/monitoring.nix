@@ -8,9 +8,9 @@ let
   cfg = config.homelab.monitoring;
 in
 {
-    options.homelab.monitoring = {
-      enable = lib.mkEnableOption "monitoring stack (prometheus, grafana, loki, alloy)";
-    };
+  options.homelab.monitoring = {
+    enable = lib.mkEnableOption "monitoring stack (prometheus, grafana, loki, alloy)";
+  };
 
   config = lib.mkIf cfg.enable {
     systemd.tmpfiles.rules = [
@@ -36,15 +36,19 @@ in
       scrapeConfigs = [
         {
           job_name = "node-homelab";
-          static_configs = [{
-            targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
-          }];
+          static_configs = [
+            {
+              targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+            }
+          ];
         }
         {
           job_name = "node-gateway";
-          static_configs = [{
-            targets = [ "172.30.32.1:9100" ];
-          }];
+          static_configs = [
+            {
+              targets = [ "172.30.32.1:9100" ];
+            }
+          ];
         }
       ];
     };
@@ -79,7 +83,12 @@ in
           auto_login = false;
           client_id = "grafana-client";
           client_secret = "$__env{GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}";
-          scopes = [ "openid" "profile" "email" "groups" ];
+          scopes = [
+            "openid"
+            "profile"
+            "email"
+            "groups"
+          ];
           auth_url = "https://sso.dominikstahl.dev/application/o/authorize/";
           token_url = "https://sso.dominikstahl.dev/application/o/token/";
           api_url = "https://sso.dominikstahl.dev/application/o/userinfo/";
@@ -135,16 +144,18 @@ in
           replication_factor = 1;
           ring.kvstore.store = "inmemory";
         };
-        schema_config.configs = [{
-          from = "2024-01-01";
-          store = "tsdb";
-          object_store = "filesystem";
-          schema = "v13";
-          index = {
-            prefix = "index_";
-            period = "24h";
-          };
-        }];
+        schema_config.configs = [
+          {
+            from = "2024-01-01";
+            store = "tsdb";
+            object_store = "filesystem";
+            schema = "v13";
+            index = {
+              prefix = "index_";
+              period = "24h";
+            };
+          }
+        ];
         limits_config = {
           retention_period = "30d";
           max_query_length = "721h";
@@ -208,7 +219,10 @@ in
       type = "oidc";
       name = "Grafana";
       group = "Grafana";
-      roleGroups = [ "Admins" "Editors" ];
+      roleGroups = [
+        "Admins"
+        "Editors"
+      ];
       clientId = "grafana-client";
       clientSecret = config.sops.placeholder.grafana-oauth-client-secret;
       redirectUris = [
