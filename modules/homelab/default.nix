@@ -12,4 +12,6 @@
   homelab.core.enable = true;
   homelab.traefik.enable = true;
   homelab.wireguard.enable = true;
+
+  homelab.apps.authentik.enable = true;
 }

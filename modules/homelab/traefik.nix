@@ -25,6 +25,7 @@ in
               type = lib.types.port;
               description = "Local port the app listens on.";
             };
+            auth = lib.mkEnableOption "require authentik forward-auth";
           };
         }
       );
@@ -60,18 +61,43 @@ in
         http = {
           routers = lib.mapAttrs' (
             name: app:
-            lib.nameValuePair name {
-              rule = "Host(`${app.host}`)";
-              service = name;
-              entryPoints = [ "websecure" ];
-              tls = { };
-            }
+            lib.nameValuePair name (
+              {
+                rule = "Host(`${app.host}`)";
+                service = name;
+                entryPoints = [ "websecure" ];
+                tls = { };
+              }
+              // lib.optionalAttrs app.auth { middlewares = [ "${name}-auth" ]; }
+            )
           ) cfg.apps;
           services = lib.mapAttrs (name: app: {
             loadBalancer.servers = [
               { url = "http://127.0.0.1:${toString app.port}"; }
             ];
           }) cfg.apps;
+          middlewares = lib.mapAttrs' (
+            name: app:
+            lib.nameValuePair "${name}-auth" {
+              forwardAuth = {
+                address = "http://127.0.0.1:9000/outpost.goauthentik.io/auth/traefik";
+                trustForwardHeader = true;
+                authResponseHeaders = [
+                  "X-authentik-username"
+                  "X-authentik-groups"
+                  "X-authentik-email"
+                  "X-authentik-name"
+                  "X-authentik-uid"
+                  "X-authentik-jwt"
+                  "X-authentik-meta-jwks"
+                  "X-authentik-meta-outpost"
+                  "X-authentik-meta-provider"
+                  "X-authentik-meta-app"
+                  "X-authentik-meta-version"
+                ];
+              };
+            }
+          ) (lib.filterAttrs (name: app: app.auth) cfg.apps);
         };
       };
     };
