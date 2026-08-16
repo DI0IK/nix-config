@@ -1,6 +1,7 @@
 { ... }:
 {
   imports = [
+    ./apps
     ./certs.nix
     ./core.nix
     ./traefik.nix
