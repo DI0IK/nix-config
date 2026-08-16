@@ -9,7 +9,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    sops.secrets."homelab-wg-private-key" = { };
+    sops.secrets.wg-private-key = { };
 
     networking.wg-quick.interfaces.wg0 = {
       autostart = true;
@@ -18,7 +18,7 @@ in
         "fd86:ea04:1115::2/128"
       ];
       mtu = 1350;
-      privateKeyFile = config.sops.secrets."homelab-wg-private-key".path;
+      privateKeyFile = config.sops.secrets.wg-private-key.path;
       peers = [
         {
           publicKey = "xp2zUi4Dx1wSQwZq3mKL7RwOIKFc9G12LyzinAj/8C4=";
@@ -33,8 +33,10 @@ in
     };
 
     networking.firewall = {
-      # traefik entrypoints, reachable via tunnel (wg0) + LAN for pre-cutover testing
-      allowedTCPPorts = [ 80 443 853 2222 1883 ];
+      allowedTCPPorts = [
+        80
+        443
+      ];
       allowedUDPPorts = [ 443 ];
     };
   };

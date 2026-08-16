@@ -4,9 +4,12 @@ set -euo pipefail
 # --- Configuration ---
 REPO_URL="https://github.com/di0ik/nix-config"
 TARGET_HOST="${TARGET_HOST:-fw13}"
-SECRET_FILE="secrets/secrets.yaml"
+COMMON_FILE="secrets/common.yaml"
+HOST_FILE="secrets/${TARGET_HOST}.yaml"
 DISK_DEVICE="${DISK_DEVICE:-/dev/nvme0n1}"
-BORG_REPO="ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./${TARGET_HOST}"
+BORG_USER="u599352-sub2"
+[ "$TARGET_HOST" = "homelab" ] && BORG_USER="u599352-sub3"
+BORG_REPO="ssh://${BORG_USER}@${BORG_USER}.your-storagebox.de:23/./${TARGET_HOST}"
 
 # Use a Bash array for experimental flags to handle whitespace safely
 NIX_FLAGS=(--extra-experimental-features "nix-command flakes")
@@ -73,7 +76,7 @@ sudo chmod 755 /mnt/persist /mnt/persist/etc
 
 echo "Extracting 'system-ssh-key' to persistence... (Check YubiKey for PIN/Touch)"
 sudo -E SOPS_AGE_KEY_FILE="$YUBI_STUB" nix "${NIX_FLAGS[@]}" shell nixpkgs#sops nixpkgs#age-plugin-yubikey -c \
-    sops -d --extract '["system-ssh-key"]' "$SECRET_FILE" | \
+    sops -d --extract '["system-ssh-key"]' "$HOST_FILE" | \
     sudo tee "$TARGET_KEY_PATH" > /dev/null
 
 sudo chmod 600 "$TARGET_KEY_PATH"
@@ -83,10 +86,10 @@ BORG_SSH_PASS_STUB=$(mktemp -t borg-pass.XXXXXX)
 BORG_PASS_STUB=$(mktemp -t borg-pass.XXXXXX)
 
 sudo -E SOPS_AGE_KEY_FILE="$YUBI_STUB" nix "${NIX_FLAGS[@]}" shell nixpkgs#sops -c \
-    sops -d --extract '["borg-ssh-pass"]' "$SECRET_FILE" > "$BORG_SSH_PASS_STUB"
+    sops -d --extract '["borg-ssh-pass"]' "$COMMON_FILE" > "$BORG_SSH_PASS_STUB"
 
 sudo -E SOPS_AGE_KEY_FILE="$YUBI_STUB" nix "${NIX_FLAGS[@]}" shell nixpkgs#sops -c \
-    sops -d --extract '["borg-repo-passphrase"]' "$SECRET_FILE" > "$BORG_PASS_STUB"
+    sops -d --extract '["borg-repo-passphrase"]' "$COMMON_FILE" > "$BORG_PASS_STUB"
 
 echo "Restoring user data from Borg backup..."
 export BORG_RSH="sshpass -f $BORG_SSH_PASS_STUB ssh -o StrictHostKeyChecking=accept-new -p 23"

@@ -3,10 +3,12 @@
     ./hardware.nix
     ./disk.nix
     ./backup.nix
+    ../../modules/nixos/services/dns.nix
     ../../modules/homelab
   ];
 
   networking.hostName = "homelab";
+  networking.dnsOverTls = "1.1.1.1#one.one.one.one";
 
   catppuccin = {
     enable = false;

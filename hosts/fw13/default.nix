@@ -20,6 +20,7 @@
   ];
 
   networking.hostName = "fw13";
+  networking.dnsOverTls = "217.154.87.4#dominik-fw13.dns.dominikstahl.dev";
 
   programs.fuse.userAllowOther = true;
 
