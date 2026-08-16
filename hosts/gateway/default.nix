@@ -4,8 +4,9 @@
     ./hardware.nix
     ./disk.nix
     ./backup.nix
-    ../../modules/nixos/services/ssh.nix
     ../../modules/nixos/services/dns.nix
+    ../../modules/nixos/services/journald.nix
+    ../../modules/nixos/services/ssh.nix
     ../../modules/gateway
   ];
 
