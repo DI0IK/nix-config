@@ -52,7 +52,6 @@ in
       content = ''
         chain prerouting {
           type nat hook prerouting priority -100; policy accept;
-          ip daddr { ${addrSet} } tcp dport { 853, 1883 } dnat to ${cfg.homelabAddress}
           ip daddr { ${addrSet} } udp dport 1194 dnat to 127.0.0.1:51820
         }
       '';
@@ -62,10 +61,11 @@ in
       allowedTCPPorts = [
         80
         443
+        853
       ];
 
       extraForwardRules = ''
-        ip daddr ${cfg.homelabAddress} tcp dport { 853, 1883 } accept
+        ip daddr ${cfg.homelabAddress} tcp dport 853 accept
         iifname "wg0" accept
       '';
     };
@@ -93,6 +93,11 @@ in
           mode tcp
           default_backend homelab_https
 
+        frontend dns_dot_in
+          bind *:853
+          mode tcp
+          default_backend homelab_dns_dot
+
         backend homelab_http
           mode tcp
           server homelab ${cfg.homelabAddress}:80 send-proxy-v2
@@ -100,6 +105,10 @@ in
         backend homelab_https
           mode tcp
           server homelab ${cfg.homelabAddress}:443 send-proxy-v2
+
+        backend homelab_dns_dot
+          mode tcp
+          server homelab ${cfg.homelabAddress}:853 send-proxy-v2
       '';
     };
   };

@@ -10,6 +10,7 @@
 | Category | Service |
 |----------|---------|
 | Identity | Authentik |
+| DNS | Blocky (DoT on port 853, Hagezi pro blocklist) |
 | Smart Home | Home Assistant + Mosquitto |
 | Search | SearXNG |
 | Content | RedLib |
@@ -267,18 +268,17 @@ Blueprints are auto-generated and placed in `/etc/authentik-blueprints/`.
 | Priority | Service | Why | Uses Existing Infra |
 |----------|---------|-----|---------------------|
 | 1 | **Vaultwarden** | Passwords. Everyone needs this. | PostgreSQL |
-| 2 | **AdGuard Home** | Block ads network-wide | Standalone |
-| 3 | **Paperless-ngx** | Document OCR/search | PostgreSQL |
-| 4 | **Syncthing** | P2P file sync between devices | Standalone |
+| 2 | **Paperless-ngx** | Document OCR/search | PostgreSQL |
+| 3 | **Syncthing** | P2P file sync between devices | Standalone |
 
 ### Tier 2 — High Value Additions
 
 | Priority | Service | Why | Uses Existing Infra |
 |----------|---------|-----|---------------------|
-| 5 | **Immich** | Phone photo backup, Google Photos replacement | PostgreSQL, Redis |
-| 6 | **n8n** | Automate anything, connect services | PostgreSQL |
-| 7 | **FreshRSS** | RSS feeds, reclaim attention from algorithms | Standalone |
-| 8 | **Uptime Kuma** | Pretty status pages for family | Standalone |
+| 4 | **Immich** | Phone photo backup, Google Photos replacement | PostgreSQL, Redis |
+| 5 | **n8n** | Automate anything, connect services | PostgreSQL |
+| 6 | **FreshRSS** | RSS feeds, reclaim attention from algorithms | Standalone |
+| 7 | **Uptime Kuma** | Pretty status pages for family | Standalone |
 
 ### Tier 3 — Nice When You Have Time
 

@@ -34,7 +34,6 @@ in
 
     networking.firewall.allowedTCPPorts = [
       853
-      1883
     ];
   };
 }

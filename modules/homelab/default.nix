@@ -2,6 +2,7 @@
 {
   imports = [
     ./apps
+    ./blocky.nix
     ./certs.nix
     ./core.nix
     ./monitoring.nix
@@ -9,6 +10,7 @@
     ./wireguard.nix
   ];
 
+  homelab.blocky.enable = true;
   homelab.certs.enable = true;
   homelab.core.enable = true;
   homelab.monitoring.enable = true;

@@ -27,13 +27,16 @@ in
       defaults.email = cfg.email;
     };
 
+    users.groups.certs = { };
+    users.users.traefik.extraGroups = [ "certs" ];
+
     security.acme.certs.${certName} = {
       domain = cfg.domain;
       extraDomainNames = [ "*.${cfg.domain}" ];
       dnsProvider = "cloudflare";
       environmentFile = config.sops.secrets.cloudflare-api-token.path;
-      group = "traefik";
-      reloadServices = [ "traefik.service" ];
+      group = "certs";
+      reloadServices = [ "traefik.service" "blocky.service" ];
     };
 
     sops.secrets."cloudflare-api-token" = {
