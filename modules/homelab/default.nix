@@ -5,6 +5,7 @@
     ./blocky.nix
     ./certs.nix
     ./core.nix
+    ./media.nix
     ./monitoring.nix
     ./traefik.nix
     ./wireguard.nix
@@ -13,6 +14,7 @@
   homelab.blocky.enable = true;
   homelab.certs.enable = true;
   homelab.core.enable = true;
+  homelab.media.enable = true;
   homelab.monitoring.enable = true;
   homelab.traefik.enable = true;
   homelab.wireguard.enable = true;
