@@ -9,7 +9,7 @@ in
     enable = lib.mkEnableOption "Blocky DNS server (DoT + ad-blocking)";
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && config.homelab.certs.enable) {
     services.blocky = {
       enable = true;
       settings = {

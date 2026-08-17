@@ -34,7 +34,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && config.homelab.certs.enable) {
     services.traefik = {
       enable = true;
 
