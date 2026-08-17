@@ -1,11 +1,17 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
 let
   cfg = config.homelab.monitoring;
+
+  nodeExporterFull = pkgs.fetchurl {
+    url = "https://grafana.com/api/dashboards/1860/revisions/45/download";
+    sha256 = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
+  };
 in
 {
   options.homelab.monitoring = {
@@ -114,6 +120,19 @@ in
             url = "http://127.0.0.1:${toString config.services.loki.configuration.server.http_listen_port}";
           }
         ];
+        dashboards.settings.providers = [
+          {
+            name = "default";
+            orgId = 1;
+            folder = "";
+            type = "file";
+            disableDeletion = false;
+            editable = true;
+            updateIntervalSeconds = 30;
+            options.path = "/etc/grafana-dashboards";
+            allowUiUpdates = true;
+          }
+        ];
       };
     };
 
@@ -128,6 +147,8 @@ in
       grafana-secret-key = { };
       grafana-oauth-client-secret = { };
     };
+
+    environment.etc."grafana-dashboards/node-exporter-full.json".source = nodeExporterFull;
 
     # ── Loki ────────────────────────────────────────────────────
     services.loki = {

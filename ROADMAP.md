@@ -23,23 +23,6 @@
 
 ---
 
-## TODO — Remaining Setup
-
-### 1. Provision Grafana dashboard declaratively
-
-Add to `modules/homelab/monitoring.nix`:
-
-- Dashboard provider config pointing to `/etc/grafana-dashboards`
-- Dashboard JSON for Node Exporter Full (ID 1860) via `environment.etc`
-
-### 2. Rebuild and test
-
-```bash
-nixos-rebuild switch --flake .#homelab
-# After Authentik starts, verify the Grafana app appears
-# Copy the generated client_secret from Authentik into SOPS
-```
-
 ### Adding new apps (Authentik blueprint system)
 
 Declare apps in the relevant module using `homelab.authentik.apps.<name>`:
