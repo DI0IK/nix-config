@@ -24,6 +24,128 @@
 
 ---
 
+## Next Steps — Media Stack
+
+Implementation of Jellyfin + *arr media automation stack with declarr for declarative configuration.
+
+### Services
+
+| App | Module | Port | Traefik Host | Auth |
+|---|---|---|---|---|
+| Jellyfin | `services.jellyfin` | 8096 | `jellyfin.dominikstahl.dev` | Native (Jellyfin) |
+| Sonarr | `services.sonarr` | 8989 | `sonarr.dominikstahl.dev` | Authentik forward-auth |
+| Radarr | `services.radarr` | 7878 | `radarr.dominikstahl.dev` | Authentik forward-auth |
+| Prowlarr | `services.prowlarr` | 9696 | `prowlarr.dominikstahl.dev` | Authentik forward-auth |
+| Seerr | `services.seerr` | 5055 | `seerr.dominikstahl.dev` | Native (Seerr) |
+| cross-seed | `services.cross-seed` | 2468 | `cross-seed.dominikstahl.dev` | Authentik forward-auth |
+| autobrr | `services.autobrr` | 7476 | `autobrr.dominikstahl.dev` | Native (autobrr) |
+| qui | `services.qui` | 7477 | `qui.dominikstahl.dev` | Native (qui) |
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Homelab (172.30.32.2)                                  │
+│                                                         │
+│  Traefik ─┬─ jellyfin:8096  (native auth)               │
+│           ├─ sonarr:8989    (forward-auth)              │
+│           ├─ radarr:7878    (forward-auth)              │
+│           ├─ prowlarr:9696  (forward-auth)              │
+│           ├─ seerr:5055     (native auth)               │
+│           ├─ cross-seed:2468 (forward-auth)             │
+│           ├─ autobrr:7476   (native auth)               │
+│           └─ qui:7477       (native auth)               │
+│                                                         │
+│  declarr (oneshot) ──► configures Sonarr/Radarr/Prowlarr│
+│  NFS mount: /mnt/user/media → /media                    │
+└─────────────────────────┬───────────────────────────────┘
+                          │
+                          │ NFS v4.2
+                          │
+┌─────────────────────────┴───────────────────────────────┐
+│  NAS (192.168.179.10)                                   │
+│                                                         │
+│  /data/media/    → /media/media/  (library)              │
+│  /data/torrents/ → /media/torrents/ (downloads)         │
+│  /data/usenet/   → /media/usenet/ (usenet)              │
+│                                                         │
+│  qBittorrent (:8080)  ← remote path mapping             │
+│  SABnzbd              ← remote path mapping             │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Path Mapping
+
+| Purpose | Homelab path | NAS path (qBittorrent) |
+|---|---|---|
+| Media library | `/media/media/` | `/data/media/` |
+| Torrent downloads | `/media/torrents/` | `/data/torrents/` |
+| Usenet downloads | `/media/usenet/` | `/data/usenet/` |
+| Sonarr root folder | `/media/media/shows` | — |
+| Radarr root folder | `/media/media/movies` | — |
+| Remote path mapping | `/data/torrents/` → `/media/torrents/` | — |
+
+### Implementation Details
+
+- **declarr** (flake input): Declaratively configure download clients, root folders, Prowlarr sync, quality definitions, naming conventions. Runs as oneshot after *arr services start.
+- **Media group**: Shared `media` group for NFS `/media` access across all *arr/Jellyfin/cross-seed users
+- **Persistence**: All data dirs under `/persist/apps/<service>` via impermanence
+- **Secrets**: SOPS for API keys (sonarr, radarr, prowlarr, cross-seed), session secrets (autobrr, qui), passwords (qBittorrent, *arr admin)
+- **qBittorrent**: Runs on NAS (`192.168.179.10:8080`), managed via qui web UI on homelab
+- **cross-seed**: Data dirs at `/media/media/{movies,shows}`, torrent dir at `/media/torrents/`
+- **autobrr**: IRC announce monitor, connects to qBittorrent on NAS
+- **Native auth**: Jellyfin, Seerr, autobrr, qui use their built-in authentication (no Authentik forward-auth)
+
+### Files to Create (9)
+
+- `modules/homelab/apps/jellyfin.nix`
+- `modules/homelab/apps/sonarr.nix`
+- `modules/homelab/apps/radarr.nix`
+- `modules/homelab/apps/prowlarr.nix`
+- `modules/homelab/apps/seerr.nix`
+- `modules/homelab/apps/cross-seed.nix`
+- `modules/homelab/apps/autobrr.nix`
+- `modules/homelab/apps/qui.nix`
+- `modules/homelab/declarr.nix`
+
+### Files to Modify (4)
+
+- `flake.nix` — Add `declarr` input + pass to homelab via `extraModules`
+- `modules/homelab/apps/default.nix` — Import 9 new modules
+- `modules/homelab/default.nix` — Enable 8 services + declarr
+- `secrets/homelab.yaml` — Add SOPS secrets
+
+### SOPS Secrets
+
+| Secret | Owner | Used by |
+|---|---|---|
+| `sonarr-api-key` | `sonarr` / `declarr` | Sonarr service + declarr config |
+| `radarr-api-key` | `radarr` / `declarr` | Radarr service + declarr config |
+| `prowlarr-api-key` | `prowlarr` / `declarr` | Prowlarr service + declarr config |
+| `qbit-password` | `declarr` | declarr qBittorrent client config |
+| `sonarr-password` | `declarr` | declarr Sonarr host config |
+| `radarr-password` | `declarr` | declarr Radarr host config |
+| `prowlarr-password` | `declarr` | declarr Prowlarr host config |
+| `cross-seed-api-key` | `cross-seed` | cross-seed `settingsFile` |
+| `autobrr-session-secret` | `autobrr` | autobrr `secretFile` |
+| `qui-session-secret` | `qui` | qui `secretFile` |
+
+Generate API keys: `openssl rand -hex 16` (32 chars)
+Generate session secrets: `openssl rand -hex 32` (64 chars)
+
+### Post-Deployment Steps
+
+1. Generate and add all SOPS secrets to `secrets/homelab.yaml`
+2. Deploy with `nixos-rebuild switch`
+3. **Jellyfin**: Add libraries (Movies → `/media/media/movies`, TV → `/media/media/shows`, Music → `/media/media/music`)
+4. **Prowlarr**: Add indexers via web UI (declarr auto-syncs Sonarr + Radarr)
+5. **cross-seed**: Configure API key and search settings via web UI
+6. **autobrr**: Configure IRC announce channels and filters
+7. **qui**: Verify qBittorrent connection to NAS (`192.168.179.10:8080`)
+8. **Seerr**: Connect to Jellyfin, configure quality profiles
+
+---
+
 ### Adding new apps (Authentik blueprint system)
 
 Declare apps in the relevant module using `homelab.authentik.apps.<name>`:
