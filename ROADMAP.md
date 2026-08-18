@@ -24,6 +24,622 @@
 
 ---
 
+## Planned Architecture Refactor (NixOS Service Inventory)
+
+### Goals
+
+- Establish a single source of truth for all exposed services
+- Eliminate duplicated configuration across NixOS modules
+- Derive Traefik, Authentik, monitoring, DNS, and documentation from a shared inventory
+- Make service onboarding declarative and repeatable
+- Centralize public ingress on the VPS
+- Keep application workloads and state in the homelab
+- Standardize authentication and authorization patterns
+- Enable future generation of dashboards, status pages, and documentation from inventory metadata
+
+---
+
+### Architecture
+
+```text
+                         Internet
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────┐
+│ Gateway VPS (Netcup)                                    │
+│                                                         │
+│ • WireGuard                                             │
+│ • Traefik                                               │
+│ • Gatus                                                 │
+│ • ntfy (planned)                                        │
+│ • node_exporter                                         │
+│ • Alloy                                                 │
+│                                                         │
+│ Public Services                                         │
+│ • 80/tcp                                                │
+│ • 443/tcp                                               │
+│ • 51820/udp                                             │
+└─────────────────────────┬───────────────────────────────┘
+                          │
+                          │ WireGuard
+                          │
+┌─────────────────────────┴───────────────────────────────┐
+│ Homelab                                                 │
+│                                                         │
+│ • Authentik                                             │
+│ • PostgreSQL                                            │
+│ • Redis                                                 │
+│ • Prometheus                                            │
+│ • Grafana                                               │
+│ • Loki                                                  │
+│ • Home Assistant                                        │
+│ • Media Stack                                           │
+│ • AI Stack                                              │
+│ • Other Applications                                    │
+│                                                         │
+│ No direct public exposure                               │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Service Inventory
+
+Every application is declared exactly once.
+
+Example:
+
+```nix
+homelab.inventory.grafana = {
+  enable = true;
+
+  service = {
+    host = "homelab";
+    protocol = "http";
+    port = 3000;
+  };
+
+  ingress = {
+    enable = true;
+    hostname = "grafana.dominikstahl.dev";
+  };
+
+  auth = {
+    type = "oidc";
+
+    name = "Grafana";
+    group = "Grafana";
+
+    roleGroups = [
+      "Admins"
+      "Editors"
+    ];
+
+    clientId = "grafana-client";
+
+    clientSecret =
+      config.sops.placeholder.grafana-oauth-client-secret;
+
+    redirectUris = [
+      {
+        url =
+          "https://grafana.dominikstahl.dev/login/generic_oauth";
+        matching_mode = "strict";
+      }
+    ];
+
+    scopes = [
+      "openid"
+      "profile"
+      "email"
+      "groups"
+    ];
+
+    accessTokenValidity = "hours=16";
+  };
+
+  monitoring = {
+    enable = true;
+    path = "/api/health";
+  };
+
+  homepage = {
+    category = "Observability";
+    description = "Metrics and dashboards";
+  };
+};
+```
+
+The inventory is the only place where service metadata should be defined.
+
+---
+
+### Generated Resources
+
+A single inventory entry may generate:
+
+```text
+NixOS service configuration
+Traefik routers
+Traefik services
+Traefik middlewares
+
+Authentik applications
+Authentik groups
+Authentik role groups
+Authentik providers
+Authentik blueprints
+
+OIDC client metadata
+Forward-auth integration
+
+Gatus checks
+Homepage entries
+
+DNS records
+Bookmarks
+Architecture documentation
+Status pages
+```
+
+No service metadata should be duplicated elsewhere in the flake.
+
+---
+
+### Authentik Integration
+
+The inventory is the source of truth for Authentik.
+
+#### OIDC Applications
+
+Example:
+
+```nix
+auth = {
+  type = "oidc";
+
+  name = "Grafana";
+  group = "Grafana";
+
+  roleGroups = [
+    "Admins"
+    "Editors"
+  ];
+
+  clientId = "grafana-client";
+
+  clientSecret =
+    config.sops.placeholder.grafana-oauth-client-secret;
+
+  redirectUris = [
+    {
+      url =
+        "https://grafana.dominikstahl.dev/login/generic_oauth";
+      matching_mode = "strict";
+    }
+  ];
+
+  scopes = [
+    "openid"
+    "profile"
+    "email"
+    "groups"
+  ];
+
+  accessTokenValidity = "hours=16";
+};
+```
+
+Generated:
+
+```text
+Authentik Application
+Authentik Group
+Authentik Role Groups
+OIDC Provider
+Blueprint
+OAuth Client Configuration
+```
+
+Flow:
+
+```text
+Application
+    │
+    ▼
+OIDC Provider
+    │
+    ▼
+Authentik
+```
+
+---
+
+#### Forward Auth Applications
+
+Example:
+
+```nix
+auth = {
+  type = "forward-auth";
+
+  name = "Sonarr";
+  group = "Sonarr";
+
+  roleGroups = [
+    "Admins"
+  ];
+};
+```
+
+Generated:
+
+```text
+Authentik Application
+Authentik Group
+Authentik Role Groups
+Proxy Provider
+Blueprint
+Traefik Middleware
+Router Middleware Attachments
+```
+
+Flow:
+
+```text
+Client
+  │
+  ▼
+Traefik
+  │
+  ▼
+Authentik Forward Auth
+  │
+  ▼
+Application
+```
+
+---
+
+#### Native Authentication
+
+Example:
+
+```nix
+auth.type = "native";
+```
+
+Applies to:
+
+```text
+Jellyfin
+Seerr
+autobrr
+qui
+```
+
+Generated:
+
+```text
+Traefik Configuration
+Monitoring Configuration
+Documentation
+```
+
+No Authentik resources are generated.
+
+---
+
+### Traefik Integration
+
+Ingress configuration is generated directly from inventory definitions.
+
+Example:
+
+```nix
+ingress = {
+  enable = true;
+  hostname = "grafana.dominikstahl.dev";
+};
+```
+
+Generated:
+
+```text
+Router
+Service
+TLS Configuration
+Middleware References
+```
+
+Forward-auth middleware is attached automatically for services using:
+
+```nix
+auth.type = "forward-auth";
+```
+
+OIDC and native authentication services receive standard routing only.
+
+---
+
+### DNS Integration
+
+Hostnames are declared once.
+
+Example:
+
+```nix
+ingress.hostname =
+  "grafana.dominikstahl.dev";
+```
+
+Consumers:
+
+```text
+Traefik
+Authentik
+Gatus
+DNS
+Homepage
+Documentation
+Bookmarks
+```
+
+The hostname should never be manually repeated elsewhere when it can be derived from inventory data.
+
+---
+
+### Monitoring Integration
+
+Every service may declare a health endpoint.
+
+Example:
+
+```nix
+monitoring = {
+  enable = true;
+  path = "/api/health";
+};
+```
+
+Generated:
+
+```text
+Gatus Health Checks
+Homepage Status Widgets
+Future Status Pages
+```
+
+Checks should target the public hostname whenever possible.
+
+This validates:
+
+```text
+DNS
+TLS
+Traefik
+WireGuard
+Application Health
+```
+
+with a single probe.
+
+---
+
+### Homepage Integration
+
+Applications may define dashboard metadata.
+
+Example:
+
+```nix
+homepage = {
+  category = "Media";
+  description = "Movie and TV streaming";
+  icon = "jellyfin";
+};
+```
+
+Generated:
+
+```text
+Homepage Groups
+Homepage Widgets
+Application Cards
+Service Links
+```
+
+No separate Homepage configuration should be required.
+
+---
+
+### Example Inventory
+
+```nix
+homelab.inventory = {
+
+  grafana = {
+    enable = true;
+
+    service.port = 3000;
+
+    ingress.hostname =
+      "grafana.dominikstahl.dev";
+
+    auth.type = "oidc";
+
+    monitoring.path =
+      "/api/health";
+  };
+
+  sonarr = {
+    enable = true;
+
+    service.port = 8989;
+
+    ingress.hostname =
+      "sonarr.dominikstahl.dev";
+
+    auth.type = "forward-auth";
+
+    monitoring.path = "/";
+  };
+
+  jellyfin = {
+    enable = true;
+
+    service.port = 8096;
+
+    ingress.hostname =
+      "jellyfin.dominikstahl.dev";
+
+    auth.type = "native";
+
+    monitoring.path = "/";
+  };
+};
+```
+
+---
+
+### Monitoring Strategy
+
+#### Gateway VPS
+
+Responsibilities:
+
+```text
+WireGuard
+Traefik
+Gatus
+ntfy
+Alloy
+node_exporter
+```
+
+The VPS acts as the external control plane.
+
+It must remain operational even when:
+
+```text
+Home Internet fails
+WireGuard goes down
+Power is lost at home
+Applications are unavailable
+```
+
+---
+
+#### Homelab
+
+Responsibilities:
+
+```text
+Prometheus
+Grafana
+Loki
+PostgreSQL
+Redis
+Applications
+Persistent Storage
+```
+
+The homelab remains the primary workload environment.
+
+---
+
+### Security Model
+
+Only ingress and edge services are publicly reachable.
+
+Public:
+
+```text
+80/tcp
+443/tcp
+51820/udp
+```
+
+Private:
+
+```text
+Grafana
+Prometheus
+Loki
+ntfy
+Gatus
+SSH
+Administrative Interfaces
+```
+
+Applications should only be reachable through declared ingress definitions.
+
+No direct public ports should be exposed by application modules.
+
+---
+
+### Adding a New Application
+
+Adding a new service should require a single inventory declaration.
+
+Example:
+
+```nix
+homelab.inventory.paperless = {
+  enable = true;
+
+  service.port = 28981;
+
+  ingress.hostname =
+    "paperless.dominikstahl.dev";
+
+  auth.type = "forward-auth";
+
+  monitoring.path = "/";
+};
+```
+
+Everything else is generated automatically:
+
+```text
+Service Configuration
+Traefik Configuration
+Authentik Resources
+TLS
+Gatus Checks
+Homepage Entries
+Documentation
+DNS Metadata
+```
+
+No second declaration should be necessary.
+
+---
+
+### Migration Tasks
+
+- [ ] Create `homelab.inventory.*`
+- [ ] Migrate service metadata i*to inventory
+- [ ] Generate Traefi* configuration from inventory
+- [ * Generate Authentik applications f*om inventory
+- [ ] Generate Authen*ik blueprints from inventory
+- [ ]*Generate OIDC providers from inven*ory
+- [ ] Generate forward-auth pr*viders from inventory
+- [ ] Generate Gatus checks from inventory
+- [ ] Generate Homepage entries from inventory
+- [ ] Generate DNS metadata from inventory
+- [ ] Generate architecture documentation from inventory
+- [ ] Remove duplicated service declarations
+- [ ] Remove manually maintained Authentik app definitions
+
+---
+
+### Design Principle
+
+> Every exposed service is declared exactly once in `homelab.inventory`. Service deployment, ingress, authentication, authorization, monitoring, DNS, dashboards, and documentation are derived from that declaration. Service metadata must never be duplicated elsewhere in the flake.
+
+---
+
 ## Next Steps — Media Stack
 
 Implementation of Jellyfin + *arr media automation stack with declarr for declarative configuration.
