@@ -7,7 +7,7 @@
 
   services.borgbackup.jobs.system = {
     paths = [
-      "/persist/apps"
+      "/persist"
     ];
 
     exclude = [
@@ -16,6 +16,6 @@
       "**/cache/**"
     ];
 
-    repo = "ssh://u599352-sub3@u599352-sub3.your-storagebox.de:23/./";
+    repo = "ssh://u599352-sub4@u599352-sub4.your-storagebox.de:23/./";
   };
 }

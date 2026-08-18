@@ -32,6 +32,11 @@
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    authentik-nix = {
+      url = "github:nix-community/authentik-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -46,6 +51,7 @@
       lanzaboote,
       nixpak,
       catppuccin-nix,
+      authentik-nix,
       ...
     }@inputs:
     let
@@ -64,6 +70,14 @@
 
         homelab = mkHost {
           hostname = "homelab";
+          users = [ "dominik" ];
+          extraModules = [
+            authentik-nix.nixosModules.default
+          ];
+        };
+
+        gateway = mkHost {
+          hostname = "gateway";
           users = [ "dominik" ];
         };
       };
