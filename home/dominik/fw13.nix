@@ -13,6 +13,7 @@
     ../../modules/home/development/vscode.nix
     ../../modules/home/documents/zathura.nix
     ../../modules/home/hyprland
+    ../../modules/home/driftwm
     ../../modules/home/shell/direnv.nix
   ];
 

@@ -1,4 +1,8 @@
-{ ... }: {
+{ pkgs, ... }: {
+  environment.systemPackages = with pkgs; [
+    git
+  ];
+
   nix.gc = {
     automatic = true;
     dates = "weekly";

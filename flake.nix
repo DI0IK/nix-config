@@ -32,6 +32,11 @@
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    driftwm = {
+      url = "github:malbiruk/driftwm";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -46,6 +51,7 @@
       lanzaboote,
       nixpak,
       catppuccin-nix,
+      driftwm,
       ...
     }@inputs:
     let
@@ -59,6 +65,7 @@
           users = [ "dominik" ];
           extraModules = [
             inputs.nixos-hardware.nixosModules.framework-13-7040-amd
+            driftwm.nixosModules.default
           ];
         };
 
