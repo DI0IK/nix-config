@@ -61,6 +61,9 @@
     "dm_crypt"
     "dm_mod"
     "fuse"
+
+    "cifs"
+    "nfs"
   ];
   boot.extraModulePackages = [ ];
 

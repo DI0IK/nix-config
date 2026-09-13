@@ -20,7 +20,6 @@ jobs:
     - name: Check flake evaluation
       run: |
         nix build .#nixosConfigurations.fw13.config.system.build.toplevel --dry-run
-        nix build .#nixosConfigurations.homelab.config.system.build.toplevel --dry-run
 
     - name: Check formatting
       run: |

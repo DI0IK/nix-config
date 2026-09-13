@@ -10,12 +10,9 @@ let
   color = c: "#${lib.strings.removePrefix "#" c}";
 in
 {
-  home.persistence."/persist".directories = [
-    ".config/driftwm"
-  ];
 
   xdg.configFile."driftwm/config.toml".text = ''
-    autostart = ["waybar", "fuzzel", "mako"]
+    autostart = ["mako"]
 
     [input.keyboard]
     layout = "de"
@@ -32,6 +29,13 @@ in
     border_width = 2
     border_color = "${color maroon}"
     border_color_focused = "${color green}"
+
+    [keybindings]
+    "mod+return" = "exec kitty"
+    "mod+escape" = "exec wlogout"
+    "mod+f" = "toggle-fullscreen"
+    "mod+m" = "fit-window"
+    "mod+d" = "exec fuzzel"
 
     [[window_rules]]
     app_id = "pinentry"

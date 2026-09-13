@@ -35,7 +35,10 @@
       ".local/share/darktable"
       ".config/libreoffice"
       ".config/mpv"
+      ".config/Antigravity IDE"
+      ".antigravity-ide"
       ".kube"
+      ".ollama"
     ];
 
   };
@@ -44,6 +47,7 @@
     wl-clipboard
     antigravity-ide-fhs
     libreoffice-fresh
+    ollama
     mpv
     darktable
     jetbrains.idea
@@ -52,5 +56,6 @@
     brightnessctl
     playerctl
     age-plugin-yubikey
+    devenv
   ];
 }

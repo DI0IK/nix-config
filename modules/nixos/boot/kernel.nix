@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ pkgs, config, lib, ... }:
 
 {
   boot.kernel.sysctl = {
@@ -36,4 +36,9 @@
     "firewire-core"
   ];
 
+  boot.supportedFilesystems = [ "nfs" "cifs" ];
+
+  environment.systemPackages = with pkgs; [
+    cifs-utils
+  ];
 }
