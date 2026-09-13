@@ -6,7 +6,13 @@
 }:
 
 let
-  inherit (theme) green maroon base mantle text;
+  inherit (theme)
+    green
+    maroon
+    base
+    mantle
+    text
+    ;
   color = c: "#${lib.strings.removePrefix "#" c}";
 in
 {
