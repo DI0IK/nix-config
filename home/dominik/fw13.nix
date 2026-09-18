@@ -46,7 +46,7 @@
   home.packages = with pkgs; [
     wl-clipboard
     antigravity-ide-fhs
-    libreoffice-fresh
+    libreoffice-stable
     ollama
     mpv
     darktable
