@@ -6,7 +6,10 @@
   users.users.dominik = {
     isNormalUser = true;
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "podman" ];
+    extraGroups = [
+      "wheel"
+      "podman"
+    ];
     hashedPasswordFile = config.sops.secrets.dominik-password.path;
   };
 
