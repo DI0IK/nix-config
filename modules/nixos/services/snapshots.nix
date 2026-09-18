@@ -2,7 +2,7 @@
   # Write the btrbk configuration file directly to /etc/btrbk.conf
   environment.etc."btrbk.conf".text = ''
     snapshot_preserve_min latest
-    snapshot_preserve 24h 7d 4w
+    snapshot_preserve 14h 3d
 
     volume /persist
       subvolume .

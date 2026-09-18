@@ -24,6 +24,7 @@
     "bridge"
     "tun"
     "tap"
+    "veth"
 
     # Native NFTables Translation Engine
     "nf_nat"
