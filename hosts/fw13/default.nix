@@ -17,6 +17,7 @@
     ../../modules/nixos/theme.nix
 
     ../../modules/nixos/boot/secure-boot.nix
+    ../../modules/nixos/programs/steam.nix
   ];
 
   networking.hostName = "fw13";

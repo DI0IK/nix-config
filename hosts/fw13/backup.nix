@@ -25,6 +25,13 @@
       "**/projects/**/build/**"
       "**/projects/**/.devenv/**"
       "**/projects/**/.direnv/**"
+
+      # Games and launcher data
+      "**/.local/share/Steam/**"
+      "**/.steam/**"
+      "**/steamapps/**"
+      "**/.local/share/PrismLauncher/**"
+      "**/PrismLauncher/**"
     ];
 
     repo = "ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./fw13";

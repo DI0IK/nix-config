@@ -14,6 +14,8 @@
     ../../modules/home/documents/zathura.nix
     ../../modules/home/hyprland
     ../../modules/home/driftwm
+    ../../modules/home/gaming/steam.nix
+    ../../modules/home/gaming/prismlauncher.nix
     ../../modules/home/shell/direnv.nix
   ];
 
