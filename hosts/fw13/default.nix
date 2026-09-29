@@ -14,6 +14,7 @@
     ../../modules/nixos/services/snapshots.nix
     ../../modules/nixos/services/virt.nix
     ../../modules/nixos/services/vpn.nix
+    ../../modules/nixos/services/network.nix
     ../../modules/nixos/theme.nix
 
     ../../modules/nixos/boot/secure-boot.nix

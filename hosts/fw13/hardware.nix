@@ -26,6 +26,36 @@
     "tap"
     "veth"
 
+    # v4 and v6 address support
+    "af_packet"
+    
+    # Full MediaTek Wi-Fi stack
+    "mt7921e"
+    "mt7921_common"
+    "mt792x_lib"
+    "mt76_connac_lib"
+    "mt76"
+    "mac80211"
+    "cfg80211"
+    "rfkill"
+
+    # Bluetooth stack for MT7922 (prevents coexistence driver issues)
+    "btmtk"
+    "btusb"
+    "bluetooth"
+
+    # Cryptographic ciphers for WPA2 / WPA3 (SAE) negotiation
+    "ccm"
+    "ctr"
+    "gcm"
+    "cmac"
+    "ecb"
+    "arc4"
+    "libarc4"
+    "ecc"
+    "ecdh_generic"
+    "crypto_simd"
+
     # Native NFTables Translation Engine
     "nf_nat"
     "nft_nat"
