@@ -100,6 +100,4 @@ in
   programs.driftwm.enable = true;
 
   services.upower.enable = true;
-
-  security.pam.services.hyprlock = { };
 }
