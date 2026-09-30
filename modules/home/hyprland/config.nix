@@ -21,6 +21,10 @@
     extraConfig = ''
       local mainMod = "SUPER"
 
+      local brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl"
+      local wpctl         = "${pkgs.wireplumber}/bin/wpctl"
+      local playerctl     = "${pkgs.playerctl}/bin/playerctl"
+
       hl.env("XCURSOR_THEME", "Adwaita")
       hl.env("XCURSOR_SIZE", "18")
       hl.env("HYPRCURSOR_THEME", "Adwaita")
@@ -53,6 +57,7 @@
           },
           xwayland = {
             enabled = true,
+            force_zero_scaling = true,
           }
       })
 
@@ -88,6 +93,13 @@
           scale    = "auto",
       })
 
+      hl.monitor({
+          output   = "eDP-1",
+          mode     = "2256x1504@60.00",
+          position = "0x0",
+          scale    = 1.5666666666666667,
+      })
+
       -- ░░░░░░░░░░  KEYBINDS  ░░░░░░░░░░
 
       hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("uwsm app -- kitty"))
@@ -98,6 +110,9 @@
       hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd("loginctl lock-session"))
       hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("uwsm stop"))
       hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("wlogout"))
+
+      hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd(
+          [[hyprctl eval '(function() for _, m in ipairs(hl.get_monitors()) do if m.name ~= "eDP-1" then local on = not m.is_mirror hl.monitor({ output = "desc:" .. m.description, mirror = on and "eDP-1" or "" }) if on then hl.exec_cmd("kanshictl switch extend") end end end end)()']]))
 
       hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
       hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
@@ -112,6 +127,27 @@
 
       hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
       hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+      -- ░░░░░░░░░░  MEDIA KEYS  ░░░░░░░░░░
+
+      hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(wpctl .. " set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
+      hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(wpctl .. " set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%-"), { locked = true, repeating = true })
+      hl.bind("XF86AudioMute",        hl.dsp.exec_cmd(wpctl .. " set-mute @DEFAULT_AUDIO_SINK@ toggle"),    { locked = true, repeating = true })
+      hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd(wpctl .. " set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),  { locked = true, repeating = true })
+
+      hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(brightnessctl .. " -e4 set 5%+"), { locked = true, repeating = true })
+      hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(brightnessctl .. " -e4 set 5%-"), { locked = true, repeating = true })
+
+      -- *:: to ignore the kernel-version dependent device name prefix
+      hl.bind("XF86KbdBrightnessUp",   hl.dsp.exec_cmd(brightnessctl .. " -d '*::kbd_backlight' set 33%+"), { locked = true, repeating = true })
+      hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd(brightnessctl .. " -d '*::kbd_backlight' set 33%-"), { locked = true, repeating = true })
+
+      hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd(playerctl .. " play-pause"), { locked = true })
+      hl.bind("XF86AudioPause", hl.dsp.exec_cmd(playerctl .. " play-pause"), { locked = true })
+      hl.bind("XF86AudioNext",  hl.dsp.exec_cmd(playerctl .. " next"),       { locked = true })
+      hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd(playerctl .. " previous"),   { locked = true })
+
+      hl.bind("XF86ScreenSaver", hl.dsp.exec_cmd("loginctl lock-session"))
 
       -- ░░░░░░░░░░ GESTURES  ░░░░░░░░░░
 
@@ -132,63 +168,6 @@
 
       hl.on("hyprland.start", function()
           hl.exec_cmd("uwsm app -- ${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent")
-      end)
-
-      -- ░░░░░░░░░░  MONITORS  ░░░░░░░░░░
-
-      local function apply_docked(ext_name)
-          hl.monitor({
-              output = ext_name, 
-              mode = "1920x1080@74.55",
-              position = "0x0",
-              scale = 1
-          })
-          hl.monitor({
-              output = "eDP-1",
-              disabled = true
-          })
-      end
-
-      local function apply_standalone()
-          hl.monitor({
-              output = "eDP-1",
-              mode = "2256x1504@60.00",
-              position = "0x0",
-              scale = 2
-          })
-      end
-
-      -- 1. Initial State Check (Runs Instantly in Memory)
-      local function init_monitors()
-          local monitors = hl.get_monitors()
-          local ext_name = nil
-
-          for _, mon in ipairs(monitors) do
-              if mon.description and string.find(mon.description, "ED273") then
-                  ext_name = mon.name
-                  break
-              end
-          end
-
-          if ext_name then
-              apply_docked(ext_name)
-          else
-              apply_standalone()
-          end
-      end
-
-      hl.on("hyprland.start", init_monitors)
-      hl.on("config.reloaded", init_monitors)
-      hl.on("monitor.added", function(mon)
-          if mon.description and string.find(mon.description, "ED273") then
-              apply_docked(mon.name)
-          end
-      end)
-
-      hl.on("monitor.removed", function(mon)
-          if mon.description and string.find(mon.description, "ED273") then
-              apply_standalone()
-          end
       end)
     '';
   };

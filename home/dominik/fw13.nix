@@ -55,8 +55,6 @@
     jetbrains.idea
     opencode
     cura-appimage
-    brightnessctl
-    playerctl
     age-plugin-yubikey
     devenv
   ];

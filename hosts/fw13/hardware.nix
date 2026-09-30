@@ -28,7 +28,7 @@
 
     # v4 and v6 address support
     "af_packet"
-    
+
     # Full MediaTek Wi-Fi stack
     "mt7921e"
     "mt7921_common"

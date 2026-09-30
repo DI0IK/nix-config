@@ -5,6 +5,7 @@
     ./config.nix
     ./hyprlock.nix
     ./hypridle.nix
+    ./kanshi.nix
   ];
 
   # Shared uwsm env: ensures home-manager session vars propagate to uwsm-managed apps
@@ -16,5 +17,7 @@
     hyprpolkitagent # polkit authentication agent
     pavucontrol # PulseAudio volume control
     adwaita-icon-theme
+    brightnessctl # screen + keyboard backlight keys, and hypridle's dimming
+    playerctl # multimedia transport keys
   ];
 }

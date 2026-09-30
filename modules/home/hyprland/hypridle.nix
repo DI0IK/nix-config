@@ -12,8 +12,8 @@
       listener = [
         {
           timeout = 150; # 2.5 minutes
-          on-timeout = "brightnessctl -s set 10"; # Dim monitor backlight (OLED friendly)
-          on-resume = "brightnessctl -r"; # Restore backlight strength
+          on-timeout = "${pkgs.brightnessctl}/bin/brightnessctl -s set 10"; # Dim monitor backlight (OLED friendly)
+          on-resume = "${pkgs.brightnessctl}/bin/brightnessctl -r"; # Restore backlight strength
         }
         {
           timeout = 300; # 5 minutes
