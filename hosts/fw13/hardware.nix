@@ -102,6 +102,11 @@
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
   boot.initrd.luks.devices.crypted.device =
     lib.mkForce "/dev/disk/by-uuid/1ae46ce0-719c-412e-991b-9fec7ddb1183";
   fileSystems."/boot".device = lib.mkForce "/dev/disk/by-uuid/0DD7-2C90";

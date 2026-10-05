@@ -8,6 +8,7 @@
   services.borgbackup.jobs.system = {
     paths = [
       "/persist/home/dominik/projects"
+      "/persist/home/dominik/.config/SchildiChatRevenge"
       "/persist/home/dominik/.config/Signal"
       "/persist/home/dominik/.thunderbird"
       "/persist/home/dominik/.librewolf"

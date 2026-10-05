@@ -2,6 +2,7 @@
   imports = [
     ./common.nix
     ../../modules/home/browsers/librewolf.nix
+    ../../modules/home/communication/schildi-revenge.nix
     ../../modules/home/communication/signal.nix
     ../../modules/home/communication/thunderbird.nix
     ../../modules/home/desktop/fuzzel.nix
