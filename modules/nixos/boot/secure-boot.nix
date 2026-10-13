@@ -13,5 +13,6 @@
       enable = true;
       autoReboot = true;
     };
+    sortKey = "01-nixos";
   };
 }

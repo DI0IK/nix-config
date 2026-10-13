@@ -20,7 +20,7 @@
   boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [
     # KVM & Core Virtualization
-    "kvm-amd" # (or kvm-intel if you change CPUs)
+    "kvm-amd"
     "bridge"
     "tun"
     "tap"
@@ -39,7 +39,7 @@
     "cfg80211"
     "rfkill"
 
-    # Bluetooth stack for MT7922 (prevents coexistence driver issues)
+    # Bluetooth stack for MT7922
     "btmtk"
     "btusb"
     "bluetooth"
@@ -54,7 +54,6 @@
     "libarc4"
     "ecc"
     "ecdh_generic"
-    "crypto_simd"
 
     # Native NFTables Translation Engine
     "nf_nat"
@@ -67,34 +66,84 @@
     "nft_ct"
     "nft_reject"
     "nft_reject_ipv4"
-    "nft_reject_ipv6" # Future-proofing for IPv6
+    "nft_reject_ipv6"
 
-    # Traffic Control (TC) Quality of Service & DHCP Fixes
+    # Traffic Control (TC) Quality of Service
     "sch_htb"
     "sch_sfq"
     "cls_u32"
     "act_csum"
-    "sch_ingress" # Future-proofing for VM network throttling
-    "act_police" # Future-proofing for VM network throttling
+    "sch_ingress"
+    "act_police"
 
+    # WireGuard VPN
+    "wireguard"
+
+    # Framework 13 & ChromeOS EC controls
+    "framework_laptop"
+    "cros_ec_lpcs"
+    "cros_ec_dev"
+    "cros_ec_sysfs"
+    "cros_charge_control"
+    "cros_kbd_led_backlight"
+    "gpio_cros_ec"
+
+    # AMD SoC Platform, Power Management & Hardware Monitoring
+    "k10temp"
+    "amd_pmf"
+    "amd_pmc"
+    "amd_sfh"
+    "amdtee"
+    "amdxcp"
+    "amdxdna"
+    "spd5118"
+    "sp5100_tco"
+
+    # Sound & Audio Subsystem (Built-in ALC269, HDMI & external USB audio devices)
+    "snd_hda_codec_alc269"
+    "snd_hda_codec_hdmi"
+    "snd_hda_intel"
+    "snd_sof_amd_rembrandt"
+    "snd_usb_audio"
+
+    # USB Type-C, Thunderbolt & Hotplug Network Adapters
+    "thunderbolt"
+    "typec"
+    "typec_ucsi"
+    "ucsi_acpi"
+    "r8152"
+    "cdc_ether"
+
+    # Input, Touchpad & Ambient Light Sensor
+    "hid_sensor_hub"
+    "hid_sensor_als"
+    "hid_multitouch"
+    "i2c_hid_acpi"
+
+    # Storage & Filesystems
     "usb_storage"
     "uas"
-    "sd_mod"
-    "btusb"
-
     "nvme"
     "ahci"
     "sd_mod"
     "ext4"
     "btrfs"
+    "vfat"
     "exfat"
     "ntfs3"
     "dm_crypt"
     "dm_mod"
     "fuse"
-
     "cifs"
     "nfs"
+
+    # USB-Serial Adapters
+    "cp210x"
+    "ch341"
+    "ftdi_sio"
+    "pl2303"
+    "cdc_acm"
+    "usbserial"
   ];
   boot.extraModulePackages = [ ];
 
