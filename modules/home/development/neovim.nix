@@ -18,6 +18,9 @@
     ];
   };
 
+  # Prevent Home Manager from managing ~/.config/nvim/init.lua
+  xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
+
   home.persistence."/persist" = {
     directories = [
       ".config/nvim"
