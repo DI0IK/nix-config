@@ -16,6 +16,10 @@
       lang.typescript = {
         enable = true;
         installDependencies = true;
+        biome = {
+          enable = true;
+          installDependencies = true;
+        };
       };
       lang.markdown = {
         enable = true;
@@ -28,6 +32,8 @@
       lang.yaml.enable = true;
       lang.toml.enable = true;
       lang.git.enable = true;
+      lang.java.enable = true;
+      lang.kotlin.enable = true;
       formatting.prettier.enable = true;
 
       # Debugging & Testing
@@ -50,8 +56,17 @@
       clippy
       typescript-language-server
       prettier
+      biome
       taplo
       lldb
+
+      # Android / JVM
+      jdt-language-server
+      kotlin-language-server
+      ktlint
+      jdk17
+      gradle
+      android-tools
     ];
   };
 
