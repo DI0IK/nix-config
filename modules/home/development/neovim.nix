@@ -1,42 +1,53 @@
-{ pkgs, lib, ... }: {
-  programs.neovim = {
+{ inputs, pkgs, ... }: {
+  imports = [
+    inputs.lazyvim.homeManagerModules.default
+  ];
+
+  programs.lazyvim = {
     enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
+
+    extras = {
+      lang.nix.enable = true;
+      lang.rust = {
+        enable = true;
+        installDependencies = true;
+      };
+      lang.typescript = {
+        enable = true;
+        installDependencies = true;
+      };
+      lang.markdown = {
+        enable = true;
+        installDependencies = true;
+      };
+      lang.json = {
+        enable = true;
+        installDependencies = true;
+      };
+      lang.yaml.enable = true;
+      formatting.prettier.enable = true;
+    };
 
     extraPackages = with pkgs; [
-      # Runtime dependencies for LazyVim, plugins, and Treesitter/Mason
-      git
-      gcc
-      gnumake
-      ripgrep
-      fd
-      unzip
-      curl
-      nodejs
+      nixd
+      marksman
+      rustfmt
+      clippy
+      typescript-language-server
+      prettier
     ];
   };
 
-  # Prevent Home Manager from managing ~/.config/nvim/init.lua
-  xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
+  programs.neovim = {
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+  };
 
   home.persistence."/persist" = {
     directories = [
-      ".config/nvim"
       ".local/share/nvim"
       ".local/state/nvim"
     ];
   };
-
-  home.activation.installLazyVim = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    if [ ! -f "$HOME/.config/nvim/init.lua" ]; then
-      mkdir -p "$HOME/.config/nvim"
-      ${pkgs.git}/bin/git clone https://github.com/LazyVim/starter /tmp/lazyvim-starter 2>/dev/null || true
-      if [ -d /tmp/lazyvim-starter ]; then
-        cp -rn /tmp/lazyvim-starter/. "$HOME/.config/nvim/" 2>/dev/null || true
-        rm -rf /tmp/lazyvim-starter "$HOME/.config/nvim/.git"
-      fi
-    fi
-  '';
 }

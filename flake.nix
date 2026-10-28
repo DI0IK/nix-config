@@ -38,6 +38,11 @@
       url = "github:malbiruk/driftwm";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    lazyvim = {
+      url = "github:pfassina/lazyvim-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
