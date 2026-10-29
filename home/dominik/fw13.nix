@@ -42,6 +42,9 @@
       ".antigravity-ide"
       ".kube"
       ".ollama"
+      ".config/opencode"
+      ".local/share/opencode"
+      ".local/state/opencode"
     ];
 
   };
