@@ -45,11 +45,13 @@
       editor.inc-rename.enable = true;
       ui.treesitter-context.enable = true;
 
-      # Coding
+      # AI & Coding
+      ai.copilot.enable = true;
       coding.neogen.enable = true;
     };
 
     extraPackages = with pkgs; [
+      nodejs
       nixd
       marksman
       rustfmt
@@ -80,6 +82,7 @@
     directories = [
       ".local/share/nvim"
       ".local/state/nvim"
+      ".config/github-copilot"
     ];
   };
 }
