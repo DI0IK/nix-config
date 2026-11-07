@@ -1,10 +1,16 @@
 { pkgs, ... }: {
+  programs.nix-index = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   home.packages = with pkgs; [
     # Scripting runtimes
     python3
     nodejs
 
     # Modern CLI power tools
+    comma
     eza
     bat
     fastfetch

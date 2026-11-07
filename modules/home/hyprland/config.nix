@@ -168,12 +168,17 @@
       hl.bind(mainMod .. " + N",         hl.dsp.exec_cmd(swaync .. " -t -sw"))
       hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("hyprsunset-toggle"))
 
+      -- Fuzzel Power Tools (NeoQWERTZ friendly: unshifted Layer 1 keys)
+      hl.bind(mainMod .. " + C",         hl.dsp.exec_cmd("uwsm app -- fuzzel-calc"))
+      hl.bind(mainMod .. " + I",         hl.dsp.exec_cmd("uwsm app -- fuzzel-keybinds"))
+      hl.bind(mainMod .. " + A",         hl.dsp.exec_cmd("audio-sink-toggle"))
+
       -- Clipboard History (Secure In-Memory Fuzzel UI)
       hl.bind(mainMod .. " + V",         hl.dsp.exec_cmd("uwsm app -- cliphist-fuzzel"))
       hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("uwsm app -- cliphist-wipe"))
 
-      -- Layout Helpers
-      hl.bind(mainMod .. " + backslash", hl.dsp.exec_cmd("hyprctl dispatch togglesplit"))
+      -- Layout Helpers (NeoQWERTZ friendly: Super+O for Orientation)
+      hl.bind(mainMod .. " + O",         hl.dsp.exec_cmd("hyprctl dispatch togglesplit"))
       hl.bind(mainMod .. " + P",         hl.dsp.exec_cmd("hyprctl dispatch pseudo"))
 
       -- Workspaces Navigation
@@ -246,12 +251,6 @@
       hl.window_rule({ match = { class = "org.gnome.Loupe" }, float = true })
       hl.window_rule({ match = { class = "org.gnome.Nautilus" }, float = true })
       hl.window_rule({ match = { class = "org.gnome.FileRoller" }, float = true })
-
-      -- ░░░░░░░░░░  AUTOSTART  ░░░░░░░░░░
-
-      hl.on("hyprland.start", function()
-          hl.exec_cmd("uwsm app -- ${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent")
-      end)
     '';
   };
 }

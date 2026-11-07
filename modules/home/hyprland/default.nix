@@ -24,4 +24,20 @@
     slurp # screen region selector
     librsvg # SVG pixbuf loader for GTK/wlogout
   ];
+
+  # Run hyprpolkitagent as a monitored systemd user service so auth popups never die across switches
+  systemd.user.services.hyprpolkitagent = {
+    Unit = {
+      Description = "Hyprland Polkit Authentication Agent";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
+      Restart = "on-failure";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 }
