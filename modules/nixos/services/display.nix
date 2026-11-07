@@ -144,5 +144,7 @@ in
 
   programs.driftwm.enable = true;
 
+  programs.gdk-pixbuf.modulePackages = [ pkgs.librsvg ];
+
   services.upower.enable = true;
 }

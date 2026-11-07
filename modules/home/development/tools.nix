@@ -4,6 +4,14 @@
     python3
     nodejs
 
+    # Modern CLI power tools
+    eza
+    bat
+    fastfetch
+    lazygit
+    nh
+    dua
+
     # Data & text processing
     jq
     yq-go

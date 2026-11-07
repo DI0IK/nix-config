@@ -3,7 +3,7 @@
     enable = true;
     settings = {
       general = {
-        lock_cmd = "pidof hyprlock || uwsm app -- hyprlock";
+        lock_cmd = "${pkgs.wl-clipboard}/bin/wl-copy --clear; pidof hyprlock || uwsm app -- hyprlock";
 
         before_sleep_cmd = "loginctl lock-session";
         after_sleep_cmd = "hyprctl dispatch dpms on";

@@ -6,6 +6,7 @@
     ./hyprlock.nix
     ./hypridle.nix
     ./kanshi.nix
+    ./hyprpaper.nix
   ];
 
   # Shared uwsm env: ensures home-manager session vars propagate to uwsm-managed apps
@@ -19,5 +20,8 @@
     adwaita-icon-theme
     brightnessctl # screen + keyboard backlight keys, and hypridle's dimming
     playerctl # multimedia transport keys
+    grim # screenshot utility
+    slurp # screen region selector
+    librsvg # SVG pixbuf loader for GTK/wlogout
   ];
 }

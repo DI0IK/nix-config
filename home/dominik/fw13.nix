@@ -6,10 +6,15 @@
     ../../modules/home/communication/signal.nix
     ../../modules/home/communication/thunderbird.nix
     ../../modules/home/desktop/fuzzel.nix
+    ../../modules/home/desktop/clipboard.nix
     ../../modules/home/desktop/kitty.nix
-    ../../modules/home/desktop/mako.nix
+    ../../modules/home/desktop/swaync.nix
+    ../../modules/home/desktop/swayosd.nix
+    ../../modules/home/desktop/hyprsunset.nix
+    ../../modules/home/desktop/media.nix
     ../../modules/home/desktop/udiskie.nix
     ../../modules/home/desktop/waybar.nix
+    ../../modules/home/shell/starship.nix
     ../../modules/home/development/neovim.nix
     ../../modules/home/development/vscode.nix
     ../../modules/home/development/antigravity-ide.nix
@@ -54,7 +59,17 @@
 
   };
 
+  home.pointerCursor = {
+    enable = true;
+    gtk.enable = true;
+    x11.enable = true;
+    package = pkgs.catppuccin-cursors.mochaMauve;
+    name = "catppuccin-mocha-mauve-cursors";
+    size = 24;
+  };
+
   home.packages = with pkgs; [
+    catppuccin-cursors.mochaMauve
     wl-clipboard
     libreoffice-stable
     ollama

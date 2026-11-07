@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  theme ? import ../../shared/theme.nix,
   ...
 }:
 {
@@ -11,26 +12,27 @@
 
     settings = {
       mainBar = {
-        position = "bottom";
-        height = 30;
-        spacing = 4;
+        position = "top";
+        height = 32;
+        spacing = 0;
 
         "modules-left" = [
           "hyprland/workspaces"
           "hyprland/submap"
+          "hyprland/window"
         ];
-        "modules-center" = [ "hyprland/window" ];
+        "modules-center" = [ "clock" ];
         "modules-right" = [
-          "idle_inhibitor"
-          "network"
-          "power-profiles-daemon"
           "cpu"
           "memory"
           "temperature"
-          "backlight"
           "pulseaudio"
+          "backlight"
+          "network"
           "battery"
-          "clock"
+          "power-profiles-daemon"
+          "idle_inhibitor"
+          "custom/notification"
           "tray"
         ];
 
@@ -38,57 +40,80 @@
           "disable-scroll" = true;
           "all-outputs" = true;
           format = "{name}";
+          "on-click" = "activate";
+        };
+
+        "hyprland/window" = {
+          format = "{title}";
+          "max-length" = 45;
+          "separate-outputs" = true;
         };
 
         idle_inhibitor = {
-          format = "{icon} ";
+          format = "{icon}";
           "format-icons" = {
-            activated = "";
-            deactivated = "";
+            activated = "<span color='${theme.mauve}'>󰅶</span>";
+            deactivated = "<span color='${theme.overlay1}'>󰾪</span>";
           };
+          "tooltip-format-activated" = "Idle Inhibitor: Active";
+          "tooltip-format-deactivated" = "Idle Inhibitor: Inactive";
         };
 
         tray = {
-          spacing = 10;
+          spacing = 8;
         };
 
         clock = {
-          "tooltip-format" = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-          "format-alt" = "{:%Y-%m-%d}";
+          format = "<span color='${theme.lavender}'>󱑂</span> {:%H:%M  󰃭 %a %d %b}";
+          "format-alt" = "<span color='${theme.lavender}'>󱑂</span> {:%H:%M:%S  󰃭 %Y-%m-%d}";
+          "tooltip-format" = "<tt><small>{calendar}</small></tt>";
+          calendar = {
+            mode = "month";
+            "mode-mon-col" = 3;
+            format = {
+              months = "<span color='${theme.mauve}'><b>{}</b></span>";
+              days = "<span color='${theme.text}'><b>{}</b></span>";
+              weeks = "<span color='${theme.teal}'><b>W{}</b></span>";
+              weekdays = "<span color='${theme.peach}'><b>{}</b></span>";
+              today = "<span color='${theme.red}'><b><u>{}</u></b></span>";
+            };
+          };
         };
 
         cpu = {
-          format = "{usage}% ";
-          tooltip = false;
+          format = "<span color='${theme.mauve}'>󰻠</span> {usage}%";
+          interval = 3;
+          tooltip = true;
         };
 
         memory = {
-          format = "{}% ";
+          format = "<span color='${theme.pink}'>󰍛</span> {percentage}%";
+          interval = 3;
+          "tooltip-format" = "RAM: {used:0.1f}GiB / {total:0.1f}GiB ({percentage}%)\nSwap: {swapUsed:0.1f}GiB / {swapTotal:0.1f}GiB";
         };
 
         temperature = {
           "critical-threshold" = 80;
-          format = "{temperatureC}°C {icon}";
+          format = "<span color='${theme.teal}'>{icon}</span> {temperatureC}°C";
+          "format-critical" = "<span color='${theme.red}'>{icon}</span> {temperatureC}°C";
           "format-icons" = [
-            ""
-            ""
-            ""
+            "󱃂"
+            "󰔏"
+            "󰔐"
           ];
+          tooltip = true;
         };
 
-        backlights = {
-          format = "{percent}% {icon}";
+        backlight = {
+          format = "<span color='${theme.yellow}'>{icon}</span> {percent}%";
           "format-icons" = [
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
+            "󰃞"
+            "󰃟"
+            "󰃠"
           ];
+          tooltip = false;
+          "on-scroll-up" = "${pkgs.brightnessctl}/bin/brightnessctl -e4 set 2%+";
+          "on-scroll-down" = "${pkgs.brightnessctl}/bin/brightnessctl -e4 set 2%-";
         };
 
         battery = {
@@ -96,11 +121,12 @@
             warning = 30;
             critical = 15;
           };
-          format = "{capacity}% {icon}";
-          "format-full" = "{capacity}% {icon}";
-          "format-charging" = "{capacity}% 󰂄";
-          "format-plugged" = "{capacity}% 󱟢";
-          "format-alt" = "{time} {icon}";
+          format = "<span color='${theme.green}'>{icon}</span> {capacity}%";
+          "format-full" = "<span color='${theme.green}'>{icon}</span> {capacity}%";
+          "format-charging" = "<span color='${theme.teal}'>󰂄</span> {capacity}%";
+          "format-plugged" = "<span color='${theme.teal}'>󱟢</span> {capacity}%";
+          "format-alt" = "<span color='${theme.green}'>{icon}</span> {time}";
+          "tooltip-format" = "Health: {health}%\nDraw: {power:.1f}W\nTime: {time}\nCycles: {cycles}";
           "format-icons" = [
             "󰁺"
             "󰁻"
@@ -115,40 +141,67 @@
           ];
         };
 
-        power-profiles-daemon = {
+        "custom/notification" = {
+          tooltip = false;
           format = "{icon}";
           "format-icons" = {
-            default = "";
-            performance = "";
-            balanced = "";
-            "power-saver" = "";
+            notification = "<span color='${theme.red}'>󰂚</span>";
+            none = "<span color='${theme.mauve}'>󰂜</span>";
+            "dnd-notification" = "<span color='${theme.red}'>󰂛</span>";
+            "dnd-none" = "<span color='${theme.overlay1}'>󰂛</span>";
+            "inhibited-notification" = "<span color='${theme.red}'>󰂚</span>";
+            "inhibited-none" = "<span color='${theme.mauve}'>󰂜</span>";
+            "dnd-inhibited-notification" = "<span color='${theme.red}'>󰂛</span>";
+            "dnd-inhibited-none" = "<span color='${theme.overlay1}'>󰂛</span>";
+          };
+          "return-type" = "json";
+          exec = "${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
+          "on-click" = "${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
+          "on-click-right" = "${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
+          escape = true;
+        };
+
+        power-profiles-daemon = {
+          format = "{icon}";
+          "tooltip-format" = "Power Profile: {profile}\nDriver: {driver}";
+          tooltip = true;
+          "format-icons" = {
+            default = "<span color='${theme.sapphire}'></span>";
+            performance = "<span color='${theme.red}'></span>";
+            balanced = "<span color='${theme.sapphire}'></span>";
+            "power-saver" = "<span color='${theme.green}'></span>";
           };
         };
 
         network = {
-          "format-wifi" = "{essid} {signalStrength}%";
-          "format-ethernet" = "{ifname} {ipaddr}";
-          "format-disconnected" = "Disconnected";
-          "format-linked" = "{ifname} No IP";
+          "format-wifi" = "<span color='${theme.peach}'>󰖩</span> {essid} <small>({signalStrength}%)</small>";
+          "format-ethernet" = "<span color='${theme.peach}'>󰈀</span> {ifname}";
+          "format-disconnected" = "<span color='${theme.red}'>󰖪</span> Disconnected";
+          "format-linked" = "<span color='${theme.peach}'>󰈀</span> No IP";
+          "tooltip-format" = "Interface: {ifname}\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}";
+          "tooltip-format-wifi" = "SSID: {essid} ({signalStrength}%)\nInterface: {ifname}\nIP: {ipaddr}/{cidr}\nFrequency: {frequency}MHz";
         };
 
         pulseaudio = {
-          format = "{volume}% {icon}";
-          "format-bluetooth" = "{volume}% {icon}";
-          "format-muted" = "";
+          format = "<span color='${theme.yellow}'>{icon}</span> {volume}%";
+          "format-bluetooth" = "<span color='${theme.yellow}'>{icon}</span> {volume}%";
+          "format-muted" = "<span color='${theme.overlay0}'>󰝟</span> Muted";
           "format-icons" = {
-            "headphone" = "";
-            "headset" = "";
-            "phone" = "";
-            "phone-muted" = "";
-            "portable" = "";
-            "car" = "";
-            "default" = [
-              ""
-              ""
+            headphone = "󰋋";
+            hands-free = "󰋎";
+            headset = "󰋎";
+            phone = "󰏲";
+            phone-muted = "󰏳";
+            portable = "󰏲";
+            car = "󰄋";
+            default = [
+              "󰕿"
+              "󰖀"
+              "󰕾"
             ];
           };
-          "scroll-step" = 1;
+          "scroll-step" = 2;
+          "on-click" = "uwsm app -- ${pkgs.pavucontrol}/bin/pavucontrol";
         };
       };
     };
@@ -156,220 +209,213 @@
     style = ''
       * {
           border: none;
-          border-radius: 1px;
-          font-family: FiraCode Nerd Font;
+          border-radius: 0;
+          font-family: "JetBrainsMono Nerd Font Propo", "JetBrainsMono Nerd Font", monospace;
           font-size: 13px;
           min-height: 0;
       }
 
       window#waybar {
+          background: transparent;
           color: @text;
-          all:unset;
       }
 
+      /* Floating Islands */
       .modules-left,
       .modules-center,
       .modules-right {
-          background-color: @mantle;
-          margin: 5px;
-          margin-top: 0;
-          border-radius: 7px;
-          padding-left: 3px;
-          padding-right: 3px;
+          background-color: alpha(@mantle, 0.88);
+          border: 1px solid alpha(@surface1, 0.45);
+          border-radius: 12px;
+          padding: 2px 6px;
+          margin-top: 6px;
+          margin-bottom: 0px;
       }
 
-      window#waybar.hidden {
-          opacity: 0.2;
+      .modules-left {
+          margin-left: 8px;
       }
 
+      .modules-right {
+          margin-right: 8px;
+      }
+
+      /* Tooltip */
       tooltip {
           background-color: @base;
           border: 1px solid @surface1;
+          border-radius: 8px;
+          padding: 6px;
       }
 
       tooltip label {
           color: @text;
       }
 
-      button {
-          box-shadow: inset 0 -3px transparent;
-          border: none;
-          border-radius: 1;
-      }
-
-      button:hover {
-          background: inherit;
-          box-shadow: inset 0 -3px @text;
+      /* Workspaces */
+      #workspaces {
+          padding: 0;
+          margin: 0;
       }
 
       #workspaces button {
-          padding: 0 0;
-          background-color: @mantle;
-          color: @text;
-          margin: 4px 1px;
+          min-width: 0;
+          padding: 1px 4px;
+          margin: 2px 1px;
+          border-radius: 6px;
+          color: @subtext0;
+          background: transparent;
+          transition: all 0.2s ease-in-out;
       }
 
       #workspaces button:hover {
-          box-shadow: inherit;
-          text-shadow: inherit;
-          background-image: linear-gradient(0deg, @surface1, @mantle);
+          color: @text;
+          background: @surface0;
+          box-shadow: none;
+          text-shadow: none;
       }
 
-      #workspaces button.focused {
-          background-image: linear-gradient(0deg, @mauve, @surface1);
-          box-shadow: inset 0 -3px @text;
+      #workspaces button.active {
+          color: @base;
+          background-color: @mauve;
+          font-weight: bold;
+          min-width: 0;
+          padding: 1px 6px;
+          border-radius: 6px;
+          box-shadow: none;
       }
 
       #workspaces button.urgent {
-          background-image: linear-gradient(0deg, @red, @mantle);
-      }
-
-      #taskbar button.active {
-          background-image: linear-gradient(0deg, @surface1, @mantle);
-      }
-
-      #mode {
-          background-color: @base;
-          box-shadow: inset 0 -2px @text;
-      }
-
-      #mpris,
-      #custom-weather,
-      #clock,
-      #language,
-      #pulseaudio,
-      #bluetooth,
-      #network,
-      #memory,
-      #cpu,
-      #temperature,
-      #disk,
-      #custom-kernel,
-      #idle_inhibitor,
-      #custom-android_extend,
-      #custom-timetracker,
-      #scratchpad,
-      #mode,
-      #tray,
-      #battery,
-      #backlight,
-      #power-profiles-daemon {
-          padding: 0 10px;
-          margin: 4px 1px;
-          border-radius: 3px;
-      }  
-
-      #window,
-      #workspaces {
-          margin: 0 4px;
-      }  
-
-      #custom-weather {
-          background-color: @teal;
-          color: @mantle;
-          margin-right: 5px;
-      }  
-
-      #custom-kernel {
-          background-color: @rosewater;
-          color: @mantle;
-      }  
-
-      #clock {
-          background-color: @green;
-          color: @mantle;
-      }  
-
-      @keyframes blink {
-          to {
-              background-color: @mantle;
-              color: @text;
-          }
-      }  
-
-      label:focus {
-          background-color: @mantle;
-      }  
-
-      #cpu {
-          background-color: @mauve;
-          color: @mantle;
-      }  
-
-      #memory {
+          color: @base;
           background-color: @red;
-          color: @mantle;
+          min-width: 0;
       }
-      #power-profiles-daemon {
-          background-color: @sapphire;
-          color: @mantle;
+
+      /* Window Title */
+      #window {
+          padding: 0 10px;
+          color: @subtext1;
+          font-weight: 500;
+      }
+
+      window#waybar.empty #window {
+          padding: 0;
+          margin: 0;
+      }
+
+      /* Submap / Mode */
+      #submap,
+      #mode {
+          background-color: @mauve;
+          color: @base;
+          padding: 2px 8px;
+          margin: 2px 4px;
+          border-radius: 6px;
+          font-weight: bold;
+      }
+
+      /* Center Clock Island */
+      #clock {
+          padding: 0 12px;
+          font-weight: 600;
+          color: @text;
+      }
+
+      /* Right Island Modules */
+      #cpu,
+      #memory,
+      #temperature,
+      #pulseaudio,
+      #backlight,
+      #network,
+      #battery,
+      #power-profiles-daemon,
+      #idle_inhibitor,
+      #custom-notification,
+      #tray,
+      #custom-weather,
+      #custom-kernel,
+      #custom-timetracker,
+      #custom-android_extend,
+      #mpris {
+          padding: 2px 6px;
+          margin: 2px 1px;
+          border-radius: 6px;
+          color: @text;
+          background: transparent;
+          transition: all 0.2s ease-in-out;
+      }
+
+      /* Subtle Hover Effect */
+      #cpu:hover,
+      #memory:hover,
+      #temperature:hover,
+      #pulseaudio:hover,
+      #backlight:hover,
+      #network:hover,
+      #battery:hover,
+      #power-profiles-daemon:hover,
+      #idle_inhibitor:hover,
+      #custom-notification:hover,
+      #clock:hover {
+          background-color: alpha(@surface0, 0.6);
+      }
+
+      /* Dividers between groups in the right island */
+      #temperature {
+          margin-right: 6px;
+          padding-right: 8px;
+          border-right: 1px solid alpha(@surface1, 0.5);
       }
 
       #backlight {
-          background-color: @teal;
-          color: @mantle;
+          margin-right: 6px;
+          padding-right: 8px;
+          border-right: 1px solid alpha(@surface1, 0.5);
       }
 
-      #battery {
-          background-color: @green;
-          color: @mantle;
+      #power-profiles-daemon {
+          margin-right: 6px;
+          padding-right: 8px;
+          border-right: 1px solid alpha(@surface1, 0.5);
       }
+
+      /* Status States */
       #battery.warning {
-          background-color: @yellow;
-          color: @mantle;
+          color: @yellow;
       }
+
       #battery.critical {
-          background-color: @maroon;
-          color: @mantle;
-      }
-
-      #disk {
-          background-color: @flamingo;
-          color: @mantle;
-      }
-
-      #network {
-          background-color: @peach;
-          color: @mantle;
-      }
-
-      #network.disconnected {
-          background-color: red;
-          color: @mantle;
-      }
-
-      #bluetooth {
-          background-color: @maroon;
-          color: @mantle;
-      }
-
-      #pulseaudio {
-          background-color: @yellow;
-          color: @mantle;
-      }
-
-      #pulseaudio.muted {
-          background-color: red;
-          color: @mantle;
-      }
-      #temperature {
-          background-color: @pink;
-          color: @mantle;
+          color: @red;
+          animation-name: blink;
+          animation-duration: 1s;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
       }
 
       #temperature.critical {
-          background-color: red;
-          color: @mantle;
+          color: @red;
       }
 
-      #mpris {
-          background-color: @base;
-          color: @text;
+      #pulseaudio.muted {
+          color: @overlay0;
       }
 
+      #network.disconnected {
+          color: @red;
+      }
+
+      @keyframes blink {
+          to {
+              color: @maroon;
+          }
+      }
+
+      /* Tray */
       #tray {
-          background-color: @overlay0;
-          color: @text;
+          padding: 0 4px;
+          margin: 2px 2px;
       }
 
       #tray > .passive {
@@ -378,67 +424,8 @@
 
       #tray > .needs-attention {
           -gtk-icon-effect: highlight;
-          background-color: @mantle;
-      }
-
-      #idle_inhibitor {
-          background-color: @base;
-          color: @text;
-      }
-
-      #idle_inhibitor.activated {
-          background-color: @text;
-          color: @base;
-      }
-      #custom-android_extend.disabled {
-          background-color: @base;
-          color: @text;
-      }
-      #custom-android_extend.enabled {
-          background-color: @green;
-          color: @mantle;
-      }
-
-      #scratchpad {
-          background-color: @base;
-          color: @text;
-      }
-
-      #scratchpad.empty {
-          background-color: transparent;
-      }
-
-      #custom-timetracker {
-          /* Use mauve for the background when the module is present but not in a specific state, 
-             or mantle if you want a dark background that matches the bar. */
-          background-color: @base; 
-          color: @text;
-          padding: 0 10px;
-      }
-
-      #custom-timetracker.running {
-          /* Bright green for active tracking */
-          background-color: @green;
-          color: @base; /* Black text on green background */
-          font-weight: bold;
-      }
-
-      #custom-timetracker.inactive {
-          /* Mauve accent when the timer is off (Clock In) */
-          background-color: @mauve;
-          color: @base; /* Black text on mauve background */
-      }
-
-      #custom-timetracker.error {
-          /* Red for corrupted state */
-          background-color: @red;
-          color: @base;
-      }
-
-      #custom-timetracker.paused {
-        /* Yellow for paused state */
-        background-color: @yellow;
-        color: @base; /* Black text on yellow background */
+          background-color: alpha(@red, 0.25);
+          border-radius: 4px;
       }
     '';
   };
