@@ -228,7 +228,6 @@
       hl.layer_rule({ match = { namespace = "fuzzel" }, blur = true })
       hl.layer_rule({ match = { namespace = "wlogout" }, blur = true })
       hl.layer_rule({ match = { namespace = "swaync-control-center" }, blur = true })
-      hl.layer_rule({ match = { namespace = "swaync-notification-window" }, blur = true })
       hl.layer_rule({ match = { namespace = "swayosd" }, blur = true })
 
       -- ░░░░░░░░░░  WINDOW RULES  ░░░░░░░░░░
