@@ -144,6 +144,11 @@
     "pl2303"
     "cdc_acm"
     "usbserial"
+
+    # USB Tethering & Networking
+    "rndis_host"
+    "cdc_ether"
+    "ipheth"
   ];
   boot.extraModulePackages = [ ];
 

@@ -46,14 +46,7 @@ let
         ];
       };
 
-      dbus.enable = true;
-      dbus.policies = {
-        "org.freedesktop.DBus" = "talk";
-        "org.freedesktop.portal.*" = "talk";
-        "org.a11y.Bus" = "talk";
-        "org.librewolf.*" = "own";
-        "org.mozilla.*" = "own";
-      };
+      dbus.enable = false;
     };
   };
 in

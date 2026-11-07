@@ -44,6 +44,9 @@ lib.nixosSystem {
           useGlobalPkgs = true;
           useUserPackages = true;
           extraSpecialArgs = { inherit inputs theme; };
+          sharedModules = [
+            inputs.catppuccin-nix.homeModules.catppuccin
+          ];
           users = homeUsers;
         };
       }

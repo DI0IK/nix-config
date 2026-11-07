@@ -19,7 +19,12 @@ in
     enable = true;
     settings.default_session = {
       user = "greeter";
-      command = "dbus-run-session ${pkgs.cage}/bin/cage -s -mlast -d -- ${pkgs.regreet}/bin/regreet";
+      command = lib.concatStringsSep " " [
+        "env GTK_USE_PORTAL=0 GDK_DEBUG=no-portals GSK_RENDERER=gl XDG_CACHE_HOME=/tmp/greeter-cache"
+        "dbus-run-session"
+        "${pkgs.cage}/bin/cage -s -mlast -d --"
+        "${pkgs.regreet}/bin/regreet"
+      ];
     };
   };
 
@@ -81,7 +86,48 @@ in
     '';
   };
 
-  users.users.greeter.extraGroups = [ "video" ];
+  users.users.greeter.extraGroups = [
+    "video"
+    "render"
+  ];
+
+  # Dual Auth: Password first (with GNOME Keyring capture), fallback to Fingerprint on empty Enter.
+  security.pam.services.greetd.rules.auth = lib.mkForce {
+    "10_unix_early" = {
+      order = 11700;
+      control = "optional";
+      modulePath = "${pkgs.pam}/lib/security/pam_unix.so";
+      args = [
+        "likeauth"
+        "nullok"
+      ];
+    };
+    "20_gnome_keyring" = {
+      order = 12200;
+      control = "optional";
+      modulePath = "${pkgs.gnome-keyring}/lib/security/pam_gnome_keyring.so";
+    };
+    "30_unix" = {
+      order = 13100;
+      control = "sufficient";
+      modulePath = "${pkgs.pam}/lib/security/pam_unix.so";
+      args = [
+        "likeauth"
+        "nullok"
+        "try_first_pass"
+      ];
+    };
+    "40_fprintd" = {
+      order = 13500;
+      control = "sufficient";
+      modulePath = "${config.services.fprintd.package}/lib/security/pam_fprintd.so";
+    };
+    "50_deny" = {
+      order = 13900;
+      control = "required";
+      modulePath = "${pkgs.pam}/lib/security/pam_deny.so";
+    };
+  };
 
   environment.sessionVariables = {
     UWSM_SILENT_START = "1";

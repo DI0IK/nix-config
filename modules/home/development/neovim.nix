@@ -50,8 +50,22 @@
       coding.neogen.enable = true;
     };
 
+    plugins = {
+      copilot = ''
+        return {
+          "zbirenbaum/copilot.lua",
+          opts = {
+            server = {
+              type = "nodejs",
+            },
+          },
+        }
+      '';
+    };
+
     extraPackages = with pkgs; [
       nodejs
+      unzip
       nixd
       marksman
       rustfmt

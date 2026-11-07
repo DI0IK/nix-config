@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  theme,
   ...
 }:
 {
@@ -155,26 +154,6 @@
     };
 
     style = ''
-      @define-color base     ${theme.base};
-      @define-color mantle   ${theme.mantle};
-      @define-color crust    ${theme.crust};
-      @define-color text     ${theme.text};
-      @define-color surface0 ${theme.surface0};
-      @define-color surface1 ${theme.surface1};
-      @define-color overlay0 ${theme.overlay0};
-      @define-color red      ${theme.red};
-      @define-color pink     ${theme.pink};
-      @define-color mauve    ${theme.mauve};
-      @define-color blue     ${theme.blue};
-      @define-color sapphire ${theme.sapphire};
-      @define-color cyan     ${theme.cyan};
-      @define-color teal     ${theme.teal};
-      @define-color green    ${theme.green};
-      @define-color yellow   ${theme.yellow};
-      @define-color peach    ${theme.peach};
-      @define-color maroon   ${theme.maroon};
-
-
       * {
           border: none;
           border-radius: 1px;

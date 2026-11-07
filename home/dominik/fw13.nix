@@ -12,6 +12,8 @@
     ../../modules/home/desktop/waybar.nix
     ../../modules/home/development/neovim.nix
     ../../modules/home/development/vscode.nix
+    ../../modules/home/development/antigravity-ide.nix
+    ../../modules/home/development/antigravity.nix
     ../../modules/home/documents/zathura.nix
     ../../modules/home/hyprland
     ../../modules/home/driftwm
@@ -40,24 +42,27 @@
       ".config/mpv"
       ".config/Antigravity IDE"
       ".antigravity-ide"
+      ".config/Antigravity"
+      ".gemini"
       ".kube"
       ".ollama"
       ".config/opencode"
       ".local/share/opencode"
       ".local/state/opencode"
+      ".dsh"
     ];
 
   };
 
   home.packages = with pkgs; [
     wl-clipboard
-    antigravity-ide-fhs
     libreoffice-stable
     ollama
     mpv
     darktable
     jetbrains.idea
     opencode
+    deepseek-harness
     cura-appimage
     age-plugin-yubikey
     devenv

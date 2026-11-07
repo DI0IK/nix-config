@@ -9,6 +9,8 @@
     extraGroups = [
       "wheel"
       "podman"
+      "video"
+      "camera"
     ];
     hashedPasswordFile = config.sops.secrets.dominik-password.path;
   };
