@@ -89,7 +89,8 @@
         memory = {
           format = "<span color='${theme.pink}'>󰍛</span> {percentage}%";
           interval = 3;
-          "tooltip-format" = "RAM: {used:0.1f}GiB / {total:0.1f}GiB ({percentage}%)\nSwap: {swapUsed:0.1f}GiB / {swapTotal:0.1f}GiB";
+          "tooltip-format" =
+            "RAM: {used:0.1f}GiB / {total:0.1f}GiB ({percentage}%)\nSwap: {swapUsed:0.1f}GiB / {swapTotal:0.1f}GiB";
         };
 
         temperature = {
@@ -179,7 +180,8 @@
           "format-disconnected" = "<span color='${theme.red}'>󰖪</span> Disconnected";
           "format-linked" = "<span color='${theme.peach}'>󰈀</span> No IP";
           "tooltip-format" = "Interface: {ifname}\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}";
-          "tooltip-format-wifi" = "SSID: {essid} ({signalStrength}%)\nInterface: {ifname}\nIP: {ipaddr}/{cidr}\nFrequency: {frequency}MHz";
+          "tooltip-format-wifi" =
+            "SSID: {essid} ({signalStrength}%)\nInterface: {ifname}\nIP: {ipaddr}/{cidr}\nFrequency: {frequency}MHz";
         };
 
         pulseaudio = {
