@@ -46,6 +46,7 @@ lib.nixosSystem {
           extraSpecialArgs = { inherit inputs theme; };
           sharedModules = [
             inputs.catppuccin-nix.homeModules.catppuccin
+            inputs.nix-index-database.homeModules.nix-index
           ];
           users = homeUsers;
         };

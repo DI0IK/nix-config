@@ -1,8 +1,6 @@
 { pkgs, ... }: {
-  programs.nix-index = {
-    enable = true;
-    enableZshIntegration = true;
-  };
+  programs.nix-index.enable = true;
+  programs.nix-index-database.comma.enable = true;
 
   home.packages = with pkgs; [
     # Scripting runtimes
@@ -10,7 +8,6 @@
     nodejs
 
     # Modern CLI power tools
-    comma
     eza
     bat
     fastfetch
