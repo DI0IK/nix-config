@@ -15,33 +15,33 @@ let
   '';
 
   fuzzelKeybinds = pkgs.writeShellScriptBin "fuzzel-keybinds" ''
-    set -euo pipefail
-    binds="Super + Return               Open Kitty terminal
-Super + D                    Open Fuzzel application launcher
-Super + V                    Browse in-memory clipboard history
-Super + Shift + V            Emergency clipboard wipe
-Super + C                    Quick math & currency calculator
-Super + I                    Open this keybinding cheat sheet
-Super + A                    Toggle audio output (Speakers ⇄ Headphones)
-Super + Shift + N            Toggle night light (Hyprsunset 3500K ⇄ 6500K)
-Super + N                    Open notification center drawer (SwayNC)
-Super + Shift + Q            Close active window
-Super + Space                Toggle window floating mode
-Super + F                    Toggle window fullscreen mode
-Super + O                    Toggle layout split orientation
-Super + P                    Toggle pseudo-tiling mode
-Super + H / J / K / L        Move focus left / down / up / right
-Super + Shift + H/J/K/L      Move window position in tiling tree
-Super + S                    Toggle scratchpad workspace
-Super + Alt + S              Move active window to scratchpad
-Super + 1..9                 Switch to workspace 1..9
-Super + Shift + 1..9         Move active window to workspace 1..9
-Super + Shift + S            Capture region screenshot to clipboard
-Print                        Capture full screen screenshot to clipboard
-Super + Escape               Open power menu (Wlogout)
-Super + T                    Lock session (Hyprlock)"
+        set -euo pipefail
+        binds="Super + Return               Open Kitty terminal
+    Super + D                    Open Fuzzel application launcher
+    Super + V                    Browse in-memory clipboard history
+    Super + Shift + V            Emergency clipboard wipe
+    Super + C                    Quick math & currency calculator
+    Super + I                    Open this keybinding cheat sheet
+    Super + A                    Toggle audio output (Speakers ⇄ Headphones)
+    Super + Shift + N            Toggle night light (Hyprsunset 3500K ⇄ 6500K)
+    Super + N                    Open notification center drawer (SwayNC)
+    Super + Shift + Q            Close active window
+    Super + Space                Toggle window floating mode
+    Super + F                    Toggle window fullscreen mode
+    Super + O                    Toggle layout split orientation
+    Super + P                    Toggle pseudo-tiling mode
+    Super + H / J / K / L        Move focus left / down / up / right
+    Super + Shift + H/J/K/L      Move window position in tiling tree
+    Super + S                    Toggle scratchpad workspace
+    Super + Alt + S              Move active window to scratchpad
+    Super + 1..9                 Switch to workspace 1..9
+    Super + Shift + 1..9         Move active window to workspace 1..9
+    Super + Shift + S            Capture region screenshot to clipboard
+    Print                        Capture full screen screenshot to clipboard
+    Super + Escape               Open power menu (Wlogout)
+    Super + T                    Lock session (Hyprlock)"
 
-    echo "$binds" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="󰌌    " --placeholder="Search keybindings..." -w 65 >/dev/null || true
+        echo "$binds" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="󰌌    " --placeholder="Search keybindings..." -w 65 >/dev/null || true
   '';
 
   audioSinkToggle = pkgs.writeShellScriptBin "audio-sink-toggle" ''
