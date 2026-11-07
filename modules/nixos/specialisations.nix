@@ -15,10 +15,14 @@ let
     if [ "$profile" = "default" ]; then
       echo "Switching to default system configuration..."
       run0 /run/current-system/bin/switch-to-configuration test
+      systemctl --user restart hyprpolkitagent.service 2>/dev/null || true
+      ${pkgs.libnotify}/bin/notify-send "System Profile" "Switched to: default" -i preferences-system || true
       echo "Switched to default configuration."
     elif [ -d "/run/current-system/specialisation/$profile" ]; then
       echo "Switching to specialisation '$profile'..."
       run0 "/run/current-system/specialisation/$profile/bin/switch-to-configuration" test
+      systemctl --user restart hyprpolkitagent.service 2>/dev/null || true
+      ${pkgs.libnotify}/bin/notify-send "System Profile" "Switched to: $profile" -i preferences-system || true
       echo "Switched to specialisation '$profile'."
     else
       echo "Error: Unknown profile '$profile'."
