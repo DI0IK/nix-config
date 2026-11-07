@@ -103,6 +103,7 @@
       hl.animation({ leaf = "fadeIn",        enabled = true, speed = 2.5, bezier = "default" })
       hl.animation({ leaf = "fadeOut",       enabled = true, speed = 2.0, bezier = "default" })
       hl.animation({ leaf = "workspaces",    enabled = true, speed = 4.0, bezier = "easeOutQuint", style = "slide" })
+      hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 3.5, bezier = "easeOutQuint", style = "slidevert" })
 
       -- ░░░░░░░░░░  INPUT  ░░░░░░░░░░
 
@@ -137,6 +138,7 @@
       -- ░░░░░░░░░░  KEYBINDS  ░░░░░░░░░░
 
       hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("uwsm app -- kitty"))
+      hl.bind(mainMod .. " + minus",  hl.dsp.exec_cmd("dropdown-terminal"))
       hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd("uwsm app -- fuzzel"))
       hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
       hl.bind(mainMod .. " + SPACE",  hl.dsp.window.float({ action = "toggle" }))
@@ -169,7 +171,7 @@
       hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("hyprsunset-toggle"))
 
       -- Fuzzel Power Tools (NeoQWERTZ friendly: unshifted Layer 1 keys)
-      hl.bind(mainMod .. " + C",         hl.dsp.exec_cmd("uwsm app -- fuzzel-calc"))
+      hl.bind(mainMod .. " + C",         hl.dsp.exec_cmd("uwsm app -- kitty --class=kitty-calc --title=Calculator -e qalc"))
       hl.bind(mainMod .. " + I",         hl.dsp.exec_cmd("uwsm app -- fuzzel-keybinds"))
       hl.bind(mainMod .. " + A",         hl.dsp.exec_cmd("audio-sink-toggle"))
 
@@ -247,10 +249,23 @@
       hl.window_rule({ match = { title = "Picture-in-Picture" }, float = true })
       hl.window_rule({ match = { title = "Picture-in-Picture" }, pin   = true })
       hl.window_rule({ match = { class = "xdg-desktop-portal-gtk" }, float = true })
-      hl.window_rule({ match = { class = "kitty" }, tile = true })
+      hl.window_rule({ match = { class = "^kitty$" }, tile = true })
       hl.window_rule({ match = { class = "org.gnome.Loupe" }, float = true })
       hl.window_rule({ match = { class = "org.gnome.Nautilus" }, float = true })
       hl.window_rule({ match = { class = "org.gnome.FileRoller" }, float = true })
+      hl.window_rule({ match = { class = "kitty-calc" }, float = true })
+      hl.window_rule({ match = { class = "kitty-calc" }, center = true })
+      hl.window_rule({ match = { class = "kitty-calc" }, size = "650 400" })
+      hl.window_rule({ match = { class = "kitty-dropdown" }, float = true })
+      hl.window_rule({ match = { class = "kitty-dropdown" }, workspace = "special:dropdown" })
+      hl.window_rule({ match = { class = "kitty-dropdown" }, size = "80% 45%" })
+      hl.window_rule({ match = { class = "kitty-dropdown" }, move = "10% 25" })
+
+      -- ░░░░░░░░░░  AUTOSTART  ░░░░░░░░░░
+
+      hl.on("hyprland.start", function()
+          hl.exec_cmd("uwsm app -- kitty --class=kitty-dropdown")
+      end)
     '';
   };
 }

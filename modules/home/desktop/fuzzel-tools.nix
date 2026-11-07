@@ -1,26 +1,21 @@
 { pkgs, ... }:
 let
-  fuzzelCalc = pkgs.writeShellScriptBin "fuzzel-calc" ''
+  dropdownTerminal = pkgs.writeShellScriptBin "dropdown-terminal" ''
     set -euo pipefail
-    query=$(echo "" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="󰃬    " --placeholder="Math or currency (e.g. 150 EUR to USD, 45 * 1.19)...")
-    if [ -n "$query" ]; then
-      result=$(${pkgs.libqalculate}/bin/qalc -t "$query" 2>/dev/null || true)
-      if [ -n "$result" ]; then
-        echo -n "$result" | ${pkgs.wl-clipboard}/bin/wl-copy
-        ${pkgs.libnotify}/bin/notify-send "Calculator" "$query = $result (copied to clipboard)" -i accessories-calculator
-      else
-        ${pkgs.libnotify}/bin/notify-send "Calculator" "Invalid expression: $query" -u low
-      fi
+    if ! ${pkgs.hyprland}/bin/hyprctl clients | ${pkgs.gnugrep}/bin/grep -q "kitty-dropdown"; then
+      uwsm app -- ${pkgs.kitty}/bin/kitty --class kitty-dropdown &
     fi
+    ${pkgs.hyprland}/bin/hyprctl dispatch 'hl.dsp.workspace.toggle_special("dropdown")'
   '';
 
   fuzzelKeybinds = pkgs.writeShellScriptBin "fuzzel-keybinds" ''
         set -euo pipefail
         binds="Super + Return               Open Kitty terminal
+    Super + -                    Toggle Quake dropdown terminal
     Super + D                    Open Fuzzel application launcher
     Super + V                    Browse in-memory clipboard history
     Super + Shift + V            Emergency clipboard wipe
-    Super + C                    Quick math & currency calculator
+    Super + C                    Open live interactive calculator (qalc)
     Super + I                    Open this keybinding cheat sheet
     Super + A                    Toggle audio output (Speakers ⇄ Headphones)
     Super + Shift + N            Toggle night light (Hyprsunset 3500K ⇄ 6500K)
@@ -66,7 +61,7 @@ in
 {
   home.packages = with pkgs; [
     libqalculate
-    fuzzelCalc
+    dropdownTerminal
     fuzzelKeybinds
     audioSinkToggle
   ];
