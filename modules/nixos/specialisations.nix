@@ -15,12 +15,17 @@ let
     if [ "$profile" = "default" ]; then
       echo "Switching to default system configuration..."
       run0 /run/current-system/bin/switch-to-configuration test
+      ${pkgs.power-profiles-daemon}/bin/powerprofilesctl set balanced || true
       systemctl --user restart hyprpolkitagent.service 2>/dev/null || true
       ${pkgs.libnotify}/bin/notify-send "System Profile" "Switched to: default" -i preferences-system || true
       echo "Switched to default configuration."
     elif [ -d "/run/current-system/specialisation/$profile" ]; then
       echo "Switching to specialisation '$profile'..."
       run0 "/run/current-system/specialisation/$profile/bin/switch-to-configuration" test
+      case "$profile" in
+        gaming) ${pkgs.power-profiles-daemon}/bin/powerprofilesctl set performance || true ;;
+        eco) ${pkgs.power-profiles-daemon}/bin/powerprofilesctl set power-saver || true ;;
+      esac
       systemctl --user restart hyprpolkitagent.service 2>/dev/null || true
       ${pkgs.libnotify}/bin/notify-send "System Profile" "Switched to: $profile" -i preferences-system || true
       echo "Switched to specialisation '$profile'."
@@ -69,11 +74,6 @@ in
       # Disable background virtualization daemons
       virtualisation.containers.enable = lib.mkForce false;
       virtualisation.podman.enable = lib.mkForce false;
-
-      # Disable CPU boost on AMD
-      systemd.tmpfiles.rules = [
-        "w /sys/devices/system/cpu/cpufreq/boost - - - - 0"
-      ];
     };
   };
 }

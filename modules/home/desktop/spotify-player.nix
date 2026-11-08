@@ -33,7 +33,10 @@
   systemd.user.services.spotify-player = {
     Unit = {
       Description = "Spotify Player Daemon";
-      After = [ "graphical-session.target" "sound.target" ];
+      After = [
+        "graphical-session.target"
+        "sound.target"
+      ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
