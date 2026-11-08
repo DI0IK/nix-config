@@ -49,7 +49,31 @@ let
       SUBTEXT="$ARTIST_CLEAN  ·  <i>$ALBUM_CLEAN</i>"
     fi
 
-    echo -e "<span allow_breaks='true'><span foreground='#cba6f7'>$ICON  </span><span weight='bold' foreground='#cdd6f4'>$TITLE_CLEAN</span>\n<span size='small' foreground='#a6adc8'>$SUBTEXT</span></span>"
+    POS_RAW="$(${pkgs.playerctl}/bin/playerctl position 2>/dev/null || echo 0)"
+    LEN_RAW="$(${pkgs.playerctl}/bin/playerctl metadata mpris:length 2>/dev/null || echo 0)"
+    POS="''${POS_RAW%%.*}"
+    POS="''${POS:-0}"
+    LEN=$((LEN_RAW / 1000000))
+
+    PROGRESS_LINE=""
+    if [ "$LEN" -gt 0 ] && [ "$POS" -ge 0 ]; then
+      if [ "$POS" -gt "$LEN" ]; then POS="$LEN"; fi
+      POS_STR=$(printf "%d:%02d" $((POS / 60)) $((POS % 60)))
+      LEN_STR=$(printf "%d:%02d" $((LEN / 60)) $((LEN % 60)))
+
+      BAR_WIDTH=16
+      FILLED=$((POS * (BAR_WIDTH - 1) / LEN))
+      EMPTY=$((BAR_WIDTH - 1 - FILLED))
+
+      FILLED_STR=""
+      EMPTY_STR=""
+      for ((i=0; i<FILLED; i++)); do FILLED_STR+="━"; done
+      for ((i=0; i<EMPTY; i++)); do EMPTY_STR+="━"; done
+
+      PROGRESS_LINE="\n<span size='small' foreground='#a6adc8'>$POS_STR </span><span foreground='#cba6f7'>$FILLED_STR</span><span foreground='#f5e0dc'>●</span><span foreground='#45475a'>$EMPTY_STR</span><span size='small' foreground='#a6adc8'> $LEN_STR</span>"
+    fi
+
+    echo -e "<span allow_breaks='true'><span foreground='#cba6f7'>$ICON  </span><span weight='bold' foreground='#cdd6f4'>$TITLE_CLEAN</span>\n<span size='small' foreground='#a6adc8'>$SUBTEXT</span>$PROGRESS_LINE</span>"
   '';
 
   mediaArtScript = pkgs.writeShellScript "hyprlock-media-art" ''
@@ -130,10 +154,10 @@ in
       label = [
         {
           monitor = "";
-          text = "cmd[update:2000] ${mediaTextScript}";
+          text = "cmd[update:1000] ${mediaTextScript}";
           font_size = 12;
           font_family = "JetBrainsMono Nerd Font";
-          position = "126, 43";
+          position = "126, 38";
           halign = "left";
           valign = "bottom";
         }
