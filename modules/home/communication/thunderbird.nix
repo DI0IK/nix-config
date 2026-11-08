@@ -21,6 +21,7 @@ let
 
         bind.rw = [
           (sloth.concat' sloth.homeDir "/.thunderbird")
+          (sloth.concat' sloth.homeDir "/Downloads")
           (sloth.env "XDG_RUNTIME_DIR")
         ];
 
@@ -31,6 +32,12 @@ let
           "/etc/static/ssl/certs"
           "/etc/machine-id"
           "/etc/localtime"
+          "/etc/fonts"
+          (sloth.concat' sloth.homeDir "/.config/gtk-3.0")
+          (sloth.concat' sloth.homeDir "/.config/dconf")
+          (sloth.concat' sloth.homeDir "/.config/fontconfig")
+          (sloth.concat' sloth.homeDir "/.local/share/fonts")
+          (sloth.concat' sloth.homeDir "/.icons")
         ];
 
         bind.dev = [
