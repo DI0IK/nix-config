@@ -26,6 +26,9 @@
         }
         {
           timeout = 1800; # 30 minutes
+          # Suspend only if media is NOT playing; retry check every 60s
+          condition_cmd = "! ${pkgs.playerctl}/bin/playerctl -a status 2>/dev/null | grep -q 'Playing'";
+          condition_retry = 60;
           on-timeout = "systemctl suspend"; # Suspend computer
         }
       ];

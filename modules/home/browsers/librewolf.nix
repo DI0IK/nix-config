@@ -23,6 +23,7 @@ let
         bind.rw = [
           (sloth.concat' sloth.homeDir "/.librewolf")
           (sloth.concat' sloth.homeDir "/Downloads")
+          (sloth.concat' sloth.homeDir "/.local/share/firefox-mpris")
           (sloth.env "XDG_RUNTIME_DIR")
         ];
 
