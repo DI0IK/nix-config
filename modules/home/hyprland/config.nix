@@ -39,6 +39,7 @@
       local swayosd       = "${pkgs.swayosd}/bin/swayosd-client"
       local swaync        = "${pkgs.swaynotificationcenter}/bin/swaync-client"
       local wlogout       = "GDK_PIXBUF_MODULE_FILE=${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache ${pkgs.wlogout}/bin/wlogout"
+      local satty         = "${pkgs.satty}/bin/satty"
 
       hl.env("XCURSOR_THEME", "catppuccin-mocha-mauve-cursors")
       hl.env("XCURSOR_SIZE", "24")
@@ -206,8 +207,8 @@
 
       -- ░░░░░░░░░░  SCREENSHOTS  ░░░░░░░░░░
 
-      hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd(grim .. " -g \"$(" .. slurp .. ")\" - | " .. wlcopy))
-      hl.bind("SHIFT + Print",           hl.dsp.exec_cmd(grim .. " -g \"$(" .. slurp .. ")\" - | " .. wlcopy))
+      hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd(grim .. " -g \"$(" .. slurp .. ")\" - | " .. satty .. " --filename -"))
+      hl.bind("SHIFT + Print",           hl.dsp.exec_cmd(grim .. " -g \"$(" .. slurp .. ")\" - | " .. satty .. " --filename -"))
       hl.bind("Print",                   hl.dsp.exec_cmd(grim .. " - | " .. wlcopy))
 
       -- ░░░░░░░░░░  MEDIA KEYS (SWAYOSD HUD)  ░░░░░░░░░░
@@ -262,6 +263,8 @@
       hl.window_rule({ match = { class = "xdg-desktop-portal-gtk" }, float = true })
       hl.window_rule({ match = { class = "^kitty$" }, tile = true })
       hl.window_rule({ match = { class = "org.gnome.Loupe" }, float = true })
+      hl.window_rule({ match = { class = "com.gabm.satty" }, float = true })
+      hl.window_rule({ match = { class = "com.gabm.satty" }, center = true })
       hl.window_rule({ match = { class = "org.gnome.Nautilus" }, float = true })
       hl.window_rule({ match = { class = "org.gnome.FileRoller" }, float = true })
       hl.window_rule({ match = { class = "kitty-calc" }, float = true })

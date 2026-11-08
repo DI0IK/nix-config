@@ -1,5 +1,9 @@
-{ ... }:
+{ pkgs, ... }:
 {
+  environment.systemPackages = [
+    pkgs.framework-tool
+  ];
+
   services.logind.settings = {
     Login = {
       # Power button

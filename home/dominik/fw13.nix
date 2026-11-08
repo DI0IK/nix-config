@@ -21,6 +21,7 @@
     ../../modules/home/shell/starship.nix
     ../../modules/home/development/neovim.nix
     ../../modules/home/development/vscode.nix
+    ../../modules/home/development/zed.nix
     ../../modules/home/development/antigravity-ide.nix
     ../../modules/home/development/antigravity.nix
     ../../modules/home/documents/zathura.nix
@@ -59,6 +60,8 @@
       ".local/share/opencode"
       ".local/state/opencode"
       ".dsh"
+      ".config/zed"
+      ".local/share/zed"
     ];
 
   };
