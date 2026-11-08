@@ -6,6 +6,7 @@
     ../../modules/home/shell/ssh.nix
     ../../modules/home/shell/zoxide.nix
     ../../modules/home/shell/zsh.nix
+    ../../modules/home/shell/fastfetch.nix
     ../../modules/home/fonts.nix
   ];
 

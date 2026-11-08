@@ -16,6 +16,7 @@
     ../../modules/nixos/services/vpn.nix
     ../../modules/nixos/services/network.nix
     ../../modules/nixos/services/power.nix
+    ../../modules/nixos/services/rgb.nix
     ../../modules/nixos/services/webcam.nix
     ../../modules/nixos/theme.nix
 

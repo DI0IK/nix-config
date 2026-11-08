@@ -21,7 +21,10 @@
           "hyprland/submap"
           "hyprland/window"
         ];
-        "modules-center" = [ "clock" ];
+        "modules-center" = [
+          "mpris"
+          "clock"
+        ];
         "modules-right" = [
           "cpu"
           "memory"
@@ -32,6 +35,7 @@
           "battery"
           "power-profiles-daemon"
           "idle_inhibitor"
+          "privacy"
           "custom/notification"
           "tray"
         ];
@@ -184,6 +188,46 @@
             "SSID: {essid} ({signalStrength}%)\nInterface: {ifname}\nIP: {ipaddr}/{cidr}\nFrequency: {frequency}MHz";
         };
 
+        mpris = {
+          format = "{player_icon} {dynamic}";
+          format-paused = "{status_icon} <i>{dynamic}</i>";
+          player-icons = {
+            default = "<span color='${theme.mauve}'>󰎆</span>";
+            spotify = "<span color='${theme.green}'>󰓇</span>";
+          };
+          status-icons = {
+            paused = "<span color='${theme.overlay1}'>󰏤</span>";
+          };
+          dynamic-order = [
+            "title"
+            "artist"
+          ];
+          dynamic-len = 32;
+          dynamic-importance-order = [
+            "title"
+            "artist"
+          ];
+          tooltip-format = "{player} ({status})\nTitle: {title}\nArtist: {artist}\nAlbum: {album}";
+        };
+
+        privacy = {
+          icon-spacing = 6;
+          icon-size = 14;
+          transition-duration = 250;
+          modules = [
+            {
+              type = "screenshare";
+              tooltip = true;
+              tooltip-icon-size = 18;
+            }
+            {
+              type = "audio-in";
+              tooltip = true;
+              tooltip-icon-size = 18;
+            }
+          ];
+        };
+
         pulseaudio = {
           format = "<span color='${theme.yellow}'>{icon}</span> {volume}%";
           "format-bluetooth" = "<span color='${theme.yellow}'>{icon}</span> {volume}%";
@@ -228,9 +272,9 @@
       .modules-right {
           background-color: alpha(@mantle, 0.88);
           border: 1px solid alpha(@surface1, 0.45);
-          border-radius: 12px;
-          padding: 2px 6px;
-          margin-top: 6px;
+          border-radius: 10px;
+          padding: 1px 4px;
+          margin-top: 5px;
           margin-bottom: 0px;
       }
 
@@ -263,8 +307,8 @@
       #workspaces button {
           min-width: 0;
           padding: 1px 4px;
-          margin: 2px 1px;
-          border-radius: 6px;
+          margin: 1px 1px;
+          border-radius: 5px;
           color: @subtext0;
           background: transparent;
           transition: all 0.2s ease-in-out;
@@ -283,7 +327,7 @@
           font-weight: bold;
           min-width: 0;
           padding: 1px 6px;
-          border-radius: 6px;
+          border-radius: 5px;
           box-shadow: none;
       }
 
@@ -295,7 +339,7 @@
 
       /* Window Title */
       #window {
-          padding: 0 10px;
+          padding: 0 6px;
           color: @subtext1;
           font-weight: 500;
       }
@@ -310,17 +354,49 @@
       #mode {
           background-color: @mauve;
           color: @base;
-          padding: 2px 8px;
-          margin: 2px 4px;
-          border-radius: 6px;
+          padding: 1px 6px;
+          margin: 1px 3px;
+          border-radius: 5px;
           font-weight: bold;
       }
 
       /* Center Clock Island */
       #clock {
-          padding: 0 12px;
+          padding: 0 8px;
           font-weight: 600;
           color: @text;
+      }
+
+      #mpris {
+          padding: 1px 8px;
+          margin: 1px 3px;
+          border-radius: 6px;
+          color: @text;
+          background-color: alpha(@surface0, 0.45);
+          transition: all 0.2s ease-in-out;
+      }
+
+      #mpris:hover {
+          background-color: alpha(@surface0, 0.8);
+      }
+
+      /* Privacy Module */
+      #privacy {
+          padding: 0 2px;
+          margin: 1px 1px;
+      }
+
+      #privacy-item {
+          padding: 0 2px;
+          color: @peach;
+      }
+
+      #privacy-item.screenshare {
+          color: @red;
+      }
+
+      #privacy-item.audio-in {
+          color: @pink;
       }
 
       /* Right Island Modules */
@@ -338,11 +414,10 @@
       #custom-weather,
       #custom-kernel,
       #custom-timetracker,
-      #custom-android_extend,
-      #mpris {
-          padding: 2px 6px;
-          margin: 2px 1px;
-          border-radius: 6px;
+      #custom-android_extend {
+          padding: 1px 4px;
+          margin: 1px 0px;
+          border-radius: 5px;
           color: @text;
           background: transparent;
           transition: all 0.2s ease-in-out;
@@ -365,20 +440,20 @@
 
       /* Dividers between groups in the right island */
       #temperature {
-          margin-right: 6px;
-          padding-right: 8px;
+          margin-right: 4px;
+          padding-right: 6px;
           border-right: 1px solid alpha(@surface1, 0.5);
       }
 
       #backlight {
-          margin-right: 6px;
-          padding-right: 8px;
+          margin-right: 4px;
+          padding-right: 6px;
           border-right: 1px solid alpha(@surface1, 0.5);
       }
 
       #power-profiles-daemon {
-          margin-right: 6px;
-          padding-right: 8px;
+          margin-right: 4px;
+          padding-right: 6px;
           border-right: 1px solid alpha(@surface1, 0.5);
       }
 

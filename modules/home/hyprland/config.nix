@@ -53,7 +53,13 @@
               gaps_out      = 8,
               border_size   = 2,
               col = {
-                  active_border   = "rgba(${lib.strings.removePrefix "#" theme.mauve}ee)",
+                  active_border = {
+                      colors = {
+                          "rgba(${lib.strings.removePrefix "#" theme.mauve}ee)",
+                          "rgba(${lib.strings.removePrefix "#" theme.pink}ee)",
+                      },
+                      angle = 45,
+                  },
                   inactive_border = "rgba(${lib.strings.removePrefix "#" theme.surface1}88)",
               },
           },
@@ -62,6 +68,8 @@
               rounding_power    = 2,
               active_opacity    = 1.0,
               inactive_opacity  = 0.96,
+              dim_inactive      = true,
+              dim_strength      = 0.08,
               blur = {
                   enabled           = true,
                   size              = 6,
@@ -175,6 +183,8 @@
       hl.bind(mainMod .. " + I",         hl.dsp.exec_cmd("uwsm app -- fuzzel-keybinds"))
       hl.bind(mainMod .. " + A",         hl.dsp.exec_cmd("audio-sink-toggle"))
       hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("uwsm app -- kitty --class=spotify-player -e spotify_player"))
+      hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd("uwsm app -- fuzzel-bluetooth"))
+      hl.bind(mainMod .. " + W",         hl.dsp.exec_cmd("uwsm app -- fuzzel-wifi"))
 
       -- Clipboard History (Secure In-Memory Fuzzel UI)
       hl.bind(mainMod .. " + V",         hl.dsp.exec_cmd("uwsm app -- cliphist-fuzzel"))

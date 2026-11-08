@@ -14,6 +14,7 @@
     ../../modules/home/desktop/hyprsunset.nix
     ../../modules/home/desktop/media.nix
     ../../modules/home/desktop/spotify-player.nix
+    ../../modules/home/desktop/rgb.nix
     ../../modules/home/desktop/udiskie.nix
     ../../modules/home/desktop/waybar.nix
     ../../modules/home/shell/starship.nix
