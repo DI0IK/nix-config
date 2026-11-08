@@ -144,6 +144,13 @@ in
 
   programs.driftwm.enable = true;
 
+  programs.dconf.enable = true;
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  };
+
   programs.gdk-pixbuf.modulePackages = [ pkgs.librsvg ];
 
   services.upower.enable = true;

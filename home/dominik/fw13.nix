@@ -8,6 +8,7 @@
     ../../modules/home/desktop/fuzzel.nix
     ../../modules/home/desktop/fuzzel-tools.nix
     ../../modules/home/desktop/clipboard.nix
+    ../../modules/home/desktop/gtk.nix
     ../../modules/home/desktop/kitty.nix
     ../../modules/home/desktop/swaync.nix
     ../../modules/home/desktop/swayosd.nix
