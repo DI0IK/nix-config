@@ -43,6 +43,7 @@ lib.nixosSystem {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
+          backupFileExtension = "backup";
           extraSpecialArgs = { inherit inputs theme; };
           sharedModules = [
             inputs.catppuccin-nix.homeModules.catppuccin

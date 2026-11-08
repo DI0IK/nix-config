@@ -174,6 +174,7 @@
       hl.bind(mainMod .. " + C",         hl.dsp.exec_cmd("uwsm app -- kitty --class=kitty-calc --title=Calculator -e qalc"))
       hl.bind(mainMod .. " + I",         hl.dsp.exec_cmd("uwsm app -- fuzzel-keybinds"))
       hl.bind(mainMod .. " + A",         hl.dsp.exec_cmd("audio-sink-toggle"))
+      hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("uwsm app -- kitty --class=spotify-player -e spotify_player"))
 
       -- Clipboard History (Secure In-Memory Fuzzel UI)
       hl.bind(mainMod .. " + V",         hl.dsp.exec_cmd("uwsm app -- cliphist-fuzzel"))
@@ -256,6 +257,9 @@
       hl.window_rule({ match = { class = "kitty-calc" }, float = true })
       hl.window_rule({ match = { class = "kitty-calc" }, center = true })
       hl.window_rule({ match = { class = "kitty-calc" }, size = "650 400" })
+      hl.window_rule({ match = { class = "spotify-player" }, float = true })
+      hl.window_rule({ match = { class = "spotify-player" }, center = true })
+      hl.window_rule({ match = { class = "spotify-player" }, size = "1000 680" })
       hl.window_rule({ match = { class = "kitty-dropdown" }, float = true })
       hl.window_rule({ match = { class = "kitty-dropdown" }, workspace = "special:dropdown" })
       hl.window_rule({ match = { class = "kitty-dropdown" }, size = "80% 45%" })
