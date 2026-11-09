@@ -4,6 +4,19 @@ let
     echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" | ${pkgs.coreutils}/bin/base64 -d > $out
   '';
 
+  defaultArt = pkgs.runCommand "catppuccin-music.png" { nativeBuildInputs = [ pkgs.librsvg ]; } ''
+    rsvg-convert -w 72 -h 72 -f png -o $out << 'EOF'
+    <svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+      <rect width="72" height="72" rx="10" fill="#313244"/>
+      <circle cx="36" cy="36" r="24" fill="#181825" stroke="#cba6f7" stroke-width="2"/>
+      <circle cx="36" cy="36" r="16" fill="none" stroke="#45475a" stroke-width="0.8" stroke-dasharray="6,3"/>
+      <circle cx="36" cy="36" r="11" fill="none" stroke="#45475a" stroke-width="0.8" stroke-dasharray="8,4"/>
+      <circle cx="36" cy="36" r="7" fill="#313244"/>
+      <circle cx="36" cy="36" r="2.5" fill="#cba6f7"/>
+    </svg>
+    EOF
+  '';
+
   batteryScript = pkgs.writeShellScript "hyprlock-battery" ''
     set -euo pipefail
 
@@ -132,6 +145,58 @@ let
     echo "<span foreground='$ICON_COLOR'>$ICON</span>  <span weight='bold' foreground='#cdd6f4'>''${CAPACITY}%</span><span size='small' foreground='#a6adc8'>$EXTRA_STR</span>"
   '';
 
+  clockScript = pkgs.writeShellScript "hyprlock-clock" ''
+    date +"<span weight='heavy' foreground='#cba6f7'>%H</span><span foreground='#6c7086'>:</span><span weight='heavy' foreground='#cdd6f4'>%M</span>"
+  '';
+
+  dateScript = pkgs.writeShellScript "hyprlock-date" ''
+    date +"<span foreground='#b4befe'>󰃭</span>  <span weight='medium' foreground='#bac2de'>%A, %d %B %Y</span>"
+  '';
+
+  sysInfoScript = pkgs.writeShellScript "hyprlock-sysinfo" ''
+    set -euo pipefail
+
+    UP_SECS=$(${pkgs.gawk}/bin/awk '{print int($1)}' /proc/uptime 2>/dev/null || echo 0)
+    DAYS=$((UP_SECS / 86400))
+    HOURS=$(( (UP_SECS % 86400) / 3600 ))
+    MINS=$(( (UP_SECS % 3600) / 60 ))
+
+    UPTIME_STR=""
+    if [ "$DAYS" -gt 0 ]; then
+      UPTIME_STR="''${DAYS}d ''${HOURS}h ''${MINS}m"
+    elif [ "$HOURS" -gt 0 ]; then
+      UPTIME_STR="''${HOURS}h ''${MINS}m"
+    else
+      UPTIME_STR="''${MINS}m"
+    fi
+
+    HOST="$(hostname 2>/dev/null || echo "fw13")"
+    KERNEL="$(uname -r 2>/dev/null | cut -d'-' -f1 || echo "")"
+
+    LEFT1=" NixOS"
+    LEFT2="󱑂 up $UPTIME_STR"
+
+    TARGET=16
+    PAD1=$((TARGET - ''${#LEFT1}))
+    PAD2=$((TARGET - ''${#LEFT2}))
+    if [ "$PAD1" -lt 1 ]; then PAD1=1; fi
+    if [ "$PAD2" -lt 1 ]; then PAD2=1; fi
+
+    SPACES1=""
+    for ((i=0; i<PAD1; i++)); do SPACES1+=" "; done
+    SPACES2=""
+    for ((i=0; i<PAD2; i++)); do SPACES2+=" "; done
+
+    LINE1="<span foreground='#cba6f7'>$LEFT1</span>$SPACES1  <span foreground='#6c7086'>•</span>  <span weight='bold' foreground='#cdd6f4'>$HOST</span>"
+    if [ -n "$KERNEL" ]; then
+      LINE2="<span foreground='#a6adc8'>$LEFT2</span>$SPACES2  <span foreground='#6c7086'>•</span>  <span foreground='#bac2de'>Linux $KERNEL</span>"
+    else
+      LINE2="<span foreground='#a6adc8'>$LEFT2</span>"
+    fi
+
+    echo -e "<span allow_breaks='true'>$LINE1\n$LINE2</span>"
+  '';
+
   mediaTextScript = pkgs.writeShellScript "hyprlock-media-text" ''
     set -euo pipefail
 
@@ -215,7 +280,7 @@ let
 
     ART_URL="$(${pkgs.playerctl}/bin/playerctl metadata mpris:artUrl 2>/dev/null || true)"
     if [ -z "$ART_URL" ]; then
-      echo "${blankImg}"
+      echo "${defaultArt}"
       exit 0
     fi
 
@@ -237,7 +302,7 @@ let
       fi
     fi
 
-    echo "${blankImg}"
+    echo "${defaultArt}"
   '';
 in
 {
@@ -324,11 +389,10 @@ in
           shadow_color = "rgba(0, 0, 0, 0.5)";
         }
 
-        # Time (Top-Right)
+        # Time (Top-Right, Duotone Clock)
         {
           monitor = "";
-          text = "$TIME";
-          color = "$text";
+          text = "cmd[update:1000] ${clockScript}";
           font_size = 80;
           font_family = "JetBrainsMono Nerd Font";
           position = "-40, -20";
@@ -342,8 +406,7 @@ in
         # Date (Top-Right, below time)
         {
           monitor = "";
-          text = "cmd[update:60000] date +'%A, %d %B %Y'";
-          color = "$subtext0";
+          text = "cmd[update:60000] ${dateScript}";
           font_size = 16;
           font_family = "JetBrainsMono Nerd Font";
           position = "-40, -145";
@@ -378,6 +441,21 @@ in
           position = "126, 38";
           halign = "left";
           valign = "bottom";
+        }
+
+        # System Info HUD (Bottom-Right)
+        {
+          monitor = "";
+          text = "cmd[update:10000] ${sysInfoScript}";
+          font_size = 12;
+          font_family = "JetBrainsMono Nerd Font";
+          text_align = "left";
+          position = "-40, 38";
+          halign = "right";
+          valign = "bottom";
+          shadow_passes = 1;
+          shadow_size = 3;
+          shadow_color = "rgba(0, 0, 0, 0.5)";
         }
       ];
 
