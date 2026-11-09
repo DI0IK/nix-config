@@ -80,7 +80,6 @@
     "wireguard"
 
     # Framework 13 & ChromeOS EC controls
-    "framework_laptop"
     "cros_ec_lpcs"
     "cros_ec_dev"
     "cros_ec_sysfs"
@@ -151,6 +150,9 @@
     "ipheth"
   ];
   boot.extraModulePackages = [ ];
+
+  # Framework 13 AMD 7040 uses in-tree cros_ec_* drivers; disable community out-of-tree kmod
+  hardware.framework.enableKmod = false;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.enableRedistributableFirmware = true;

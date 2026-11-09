@@ -21,7 +21,6 @@
   boot.kernelParams = [
     "page_alloc.shuffle=1"
     "strict_devmem=1"
-    "iommu=pt"
     "amd_iommu=on"
     "quiet"
     "splash"

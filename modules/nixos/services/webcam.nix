@@ -6,37 +6,18 @@
 }:
 
 let
+  gstPlugins = with pkgs.gst_all_1; [
+    gstreamer
+    gst-plugins-base
+    gst-plugins-good
+    gst-plugins-bad
+    pkgs.pipewire
+  ];
+
   sonyWebcamScript = pkgs.writeShellScriptBin "sony-webcam" ''
     set -euo pipefail
 
-    echo "==> Searching for Sony a6400 v4l2loopback device..."
-    VIDEO_DEV=""
-
-    # Find loopback device matching card label
-    for dev in /sys/devices/virtual/video4linux/video*; do
-      if [ -d "$dev" ] && grep -qi "Sony a6400" "$dev/name" 2>/dev/null; then
-        VIDEO_DEV="/dev/$(basename "$dev")"
-        break
-      fi
-    done
-
-    if [ -z "$VIDEO_DEV" ]; then
-      # Fallback to any v4l2loopback device
-      for dev in /sys/devices/virtual/video4linux/video*; do
-        if [ -d "$dev" ] && grep -qi "v4l2loopback" "$dev/name" 2>/dev/null; then
-          VIDEO_DEV="/dev/$(basename "$dev")"
-          break
-        fi
-      done
-    fi
-
-    if [ -z "$VIDEO_DEV" ]; then
-      echo "Error: Virtual loopback video device not found." >&2
-      echo "Please ensure the 'v4l2loopback' module is loaded (a reboot may be required)." >&2
-      exit 1
-    fi
-
-    echo "Found virtual webcam device: $VIDEO_DEV"
+    export GST_PLUGIN_SYSTEM_PATH_1_0="${pkgs.lib.makeSearchPathOutput "lib" "lib/gstreamer-1.0" gstPlugins}"
 
     # Terminate any volume monitors holding PTP lock
     pkill -f gvfs-gphoto2-volume-monitor 2>/dev/null || true
@@ -59,40 +40,29 @@ let
       sleep 1
     done
 
-    echo "Streaming Sony a6400 to $VIDEO_DEV..."
+    echo "Streaming Sony a6400 to PipeWire (Video/Source)..."
     exec ${pkgs.gphoto2}/bin/gphoto2 --stdout --capture-movie \
-      | ${pkgs.ffmpeg}/bin/ffmpeg -hide_banner -loglevel error \
-          -fflags nobuffer -flags low_delay \
-          -i - \
-          -vcodec rawvideo -pix_fmt yuv420p -threads 0 \
-          -f v4l2 "$VIDEO_DEV"
+      | ${pkgs.gst_all_1.gstreamer}/bin/gst-launch-1.0 -v \
+          fdsrc ! \
+          jpegdec ! \
+          videoconvert ! \
+          pipewiresink stream-properties='props,media.class=Video/Source,node.name="Sony a6400",node.description="Sony a6400"'
   '';
 in
 {
-  # Kernel module packages and loading at boot (required for locked kernel modules)
-  boot.extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
-  boot.kernelModules = [ "v4l2loopback" ];
-
-  # Configure loopback device
-  boot.extraModprobeConfig = ''
-    options v4l2loopback exclusive_caps=1 card_label="Sony a6400" max_buffers=2
-  '';
-
   # PTP camera udev rules & user permissions
   programs.gphoto2.enable = true;
 
   # Tools for camera streaming and inspection
   environment.systemPackages = with pkgs; [
-    v4l-utils
     gphoto2
-    ffmpeg
     sonyWebcamScript
   ];
 
   # Auto-start systemd service on camera connection
   systemd.services.sony-webcam = {
-    description = "Sony a6400 USB Webcam Stream";
-    after = [ "network.target" ];
+    description = "Sony a6400 PipeWire Virtual Webcam Stream";
+    after = [ "network.target" "pipewire.service" ];
     serviceConfig = {
       Type = "simple";
       ExecStart = "${sonyWebcamScript}/bin/sony-webcam";
@@ -100,6 +70,10 @@ in
       User = "dominik";
       Group = "video";
       SupplementaryGroups = [ "camera" ];
+      Environment = [
+        "XDG_RUNTIME_DIR=/run/user/1000"
+        "PIPEWIRE_RUNTIME_DIR=/run/user/1000"
+      ];
     };
   };
 
