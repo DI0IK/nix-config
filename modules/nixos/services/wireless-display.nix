@@ -29,6 +29,20 @@
       7236
     ];
 
+    # Dynamic ephemeral ports used by GStreamer and the Chromecast HTTP streaming server
+    allowedTCPPortRanges = [
+      {
+        from = 32768;
+        to = 60999;
+      }
+    ];
+    allowedUDPPortRanges = [
+      {
+        from = 32768;
+        to = 60999;
+      }
+    ];
+
     # Trust virtual Wi-Fi Direct peer-to-peer interfaces
     trustedInterfaces = [
       "p2p-wl+"
