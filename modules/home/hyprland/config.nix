@@ -194,6 +194,7 @@
       -- Layout Helpers (NeoQWERTZ friendly: Super+O for Orientation)
       hl.bind(mainMod .. " + O",         hl.dsp.exec_cmd("hyprctl dispatch togglesplit"))
       hl.bind(mainMod .. " + P",         hl.dsp.exec_cmd("hyprctl dispatch pseudo"))
+      hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("uwsm app -- gnome-network-displays"))
 
       -- Workspaces Navigation
       for i = 1, 10 do
@@ -273,6 +274,12 @@
       hl.window_rule({ match = { class = "spotify-player" }, float = true })
       hl.window_rule({ match = { class = "spotify-player" }, center = true })
       hl.window_rule({ match = { class = "spotify-player" }, size = "1000 680" })
+      hl.window_rule({ match = { class = "gnome-network-displays" }, float = true })
+      hl.window_rule({ match = { class = "gnome-network-displays" }, center = true })
+      hl.window_rule({ match = { class = "gnome-network-displays" }, size = "720 540" })
+      hl.window_rule({ match = { class = "org.gnome.NetworkDisplays" }, float = true })
+      hl.window_rule({ match = { class = "org.gnome.NetworkDisplays" }, center = true })
+      hl.window_rule({ match = { class = "org.gnome.NetworkDisplays" }, size = "720 540" })
       hl.window_rule({ match = { class = "kitty-dropdown" }, float = true })
       hl.window_rule({ match = { class = "kitty-dropdown" }, workspace = "special:dropdown" })
       hl.window_rule({ match = { class = "kitty-dropdown" }, size = "80% 45%" })

@@ -18,6 +18,7 @@
     ../../modules/nixos/services/power.nix
     ../../modules/nixos/services/rgb.nix
     ../../modules/nixos/services/webcam.nix
+    ../../modules/nixos/services/wireless-display.nix
     ../../modules/nixos/theme.nix
 
     ../../modules/nixos/boot/secure-boot.nix

@@ -132,6 +132,7 @@ let
     Super + F                    Toggle window fullscreen mode
     Super + O                    Toggle layout split orientation
     Super + P                    Toggle pseudo-tiling mode
+    Super + Shift + P            Wireless screen mirroring (Cast / Miracast)
     Super + H / J / K / L        Move focus left / down / up / right
     Super + Shift + H/J/K/L      Move window position in tiling tree
     Super + S                    Toggle scratchpad workspace

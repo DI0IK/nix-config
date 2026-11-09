@@ -42,6 +42,7 @@ in
     "mod+f" = "toggle-fullscreen"
     "mod+m" = "fit-window"
     "mod+d" = "exec fuzzel"
+    "mod+shift+p" = "exec gnome-network-displays"
 
     [[window_rules]]
     app_id = "pinentry"
@@ -53,6 +54,10 @@ in
 
     [[window_rules]]
     app_id = "chromium"
+    blur = true
+
+    [[window_rules]]
+    app_id = "gnome-network-displays"
     blur = true
   '';
 }

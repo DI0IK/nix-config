@@ -1,4 +1,6 @@
-{ config, ... }: {
+{ config, ... }:
+
+{
   sops.secrets.wg-private-key = { };
 
   networking.wg-quick.interfaces.wg0 = {
@@ -9,6 +11,22 @@
     ];
     mtu = 1280;
     privateKeyFile = config.sops.secrets.wg-private-key.path;
+
+    # Exclude internal / private subnets and multicast from the VPN tunnel.
+    # Rules with priority 100 are evaluated before wg-quick's routing table (table 51820),
+    # ensuring local Wi-Fi, campus LAN (10.0.0.0/8, 192.168.0.0/16), and mDNS (224.0.0.0/4)
+    # are routed directly through the physical network interface.
+    postUp = ''
+      ip rule add to 10.0.0.0/8 table main priority 100
+      ip rule add to 192.168.0.0/16 table main priority 100
+      ip rule add to 224.0.0.0/4 table main priority 100
+    '';
+
+    postDown = ''
+      ip rule del to 10.0.0.0/8 table main priority 100 || true
+      ip rule del to 192.168.0.0/16 table main priority 100 || true
+      ip rule del to 224.0.0.0/4 table main priority 100 || true
+    '';
 
     peers = [
       {
