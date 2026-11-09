@@ -22,6 +22,63 @@ let
     CAPACITY=$(cat "$BAT_DIR/capacity" 2>/dev/null || echo 0)
     STATUS=$(cat "$BAT_DIR/status" 2>/dev/null || echo "Unknown")
 
+    CHARGER_W=""
+    CHARGER_PORT=""
+    for u in /sys/class/power_supply/ucsi-source-psy-*; do
+      if [ -d "$u" ] && [ "$(cat "$u/online" 2>/dev/null || echo 0)" = "1" ]; then
+        V_U=$(cat "$u/voltage_now" 2>/dev/null || echo 0)
+        I_U=$(cat "$u/current_now" 2>/dev/null || echo 0)
+        if [ "$V_U" -gt 0 ] && [ "$I_U" -gt 0 ]; then
+          W_INT=$(( (V_U / 1000) * (I_U / 1000) / 1000000 ))
+          if [ "$W_INT" -gt 0 ]; then
+            CHARGER_W="''${W_INT}W"
+          fi
+        fi
+        PORT_ID="''${u##*:}"
+        PORT_NUM="''${PORT_ID#0}"
+        PORT_NUM="''${PORT_NUM#0}"
+        CHARGER_PORT="Port $PORT_NUM"
+        break
+      fi
+    done
+
+    V_BAT=$(cat "$BAT_DIR/voltage_now" 2>/dev/null || echo 0)
+    I_BAT=$(cat "$BAT_DIR/current_now" 2>/dev/null || echo 0)
+    POWER_W=""
+    if [ "$V_BAT" -gt 0 ] && [ "$I_BAT" -gt 0 ]; then
+      POWER_W=$(${pkgs.gawk}/bin/awk -v v="$V_BAT" -v i="$I_BAT" 'BEGIN { printf "%.1f", (v * i) / 1000000000000 }')
+    fi
+
+    TIME_STR=""
+    C_NOW=$(cat "$BAT_DIR/charge_now" 2>/dev/null || echo 0)
+    C_FULL=$(cat "$BAT_DIR/charge_full" 2>/dev/null || echo 0)
+    if [ "$I_BAT" -gt 0 ]; then
+      if [ "$STATUS" = "Charging" ] && [ "$C_FULL" -gt "$C_NOW" ]; then
+        DIFF=$((C_FULL - C_NOW))
+        MINS=$(( (DIFF * 60) / I_BAT ))
+        if [ "$MINS" -gt 0 ]; then
+          H=$((MINS / 60))
+          M=$((MINS % 60))
+          if [ "$H" -gt 0 ]; then
+            TIME_STR="''${H}h ''${M}m to full"
+          else
+            TIME_STR="''${M}m to full"
+          fi
+        fi
+      elif [ "$STATUS" = "Discharging" ] && [ "$C_NOW" -gt 0 ]; then
+        MINS=$(( (C_NOW * 60) / I_BAT ))
+        if [ "$MINS" -gt 0 ]; then
+          H=$((MINS / 60))
+          M=$((MINS % 60))
+          if [ "$H" -gt 0 ]; then
+            TIME_STR="''${H}h ''${M}m left"
+          else
+            TIME_STR="''${M}m left"
+          fi
+        fi
+      fi
+    fi
+
     if [ "$STATUS" = "Charging" ]; then
       if [ "$CAPACITY" -ge 90 ]; then ICON="󰂅"
       elif [ "$CAPACITY" -ge 80 ]; then ICON="󰂄"
@@ -34,11 +91,9 @@ let
       else ICON="󰢝"
       fi
       ICON_COLOR="#a6e3a1"
-      STATUS_INFO="Charging"
     elif [ "$STATUS" = "Full" ]; then
       ICON="󰁹"
       ICON_COLOR="#a6e3a1"
-      STATUS_INFO="Full"
     else
       if [ "$CAPACITY" -ge 95 ]; then ICON="󰁹"; ICON_COLOR="#a6e3a1"
       elif [ "$CAPACITY" -ge 80 ]; then ICON="󰂁"; ICON_COLOR="#a6e3a1"
@@ -48,14 +103,33 @@ let
       elif [ "$CAPACITY" -ge 15 ]; then ICON="󰁺"; ICON_COLOR="#fab387"
       else ICON="󰂃"; ICON_COLOR="#f38ba8"
       fi
-      STATUS_INFO=""
     fi
 
-    if [ -n "$STATUS_INFO" ]; then
-      echo "<span foreground='$ICON_COLOR'>$ICON</span>  <span weight='bold' foreground='#cdd6f4'>''${CAPACITY}%</span> <span size='small' foreground='#a6adc8'>($STATUS_INFO)</span>"
+    EXTRA_PARTS=()
+    if [ "$STATUS" = "Charging" ]; then
+      [ -n "$POWER_W" ] && EXTRA_PARTS+=("+''${POWER_W}W")
+      if [ -n "$CHARGER_W" ]; then
+        if [ -n "$CHARGER_PORT" ]; then
+          EXTRA_PARTS+=("''${CHARGER_W} PD ($CHARGER_PORT)")
+        else
+          EXTRA_PARTS+=("''${CHARGER_W} PD")
+        fi
+      fi
+      [ -n "$TIME_STR" ] && EXTRA_PARTS+=("~$TIME_STR")
+    elif [ "$STATUS" = "Full" ]; then
+      EXTRA_PARTS+=("Full")
+      [ -n "$CHARGER_W" ] && EXTRA_PARTS+=("''${CHARGER_W} plugged")
     else
-      echo "<span foreground='$ICON_COLOR'>$ICON</span>  <span weight='bold' foreground='#cdd6f4'>''${CAPACITY}%</span>"
+      [ -n "$POWER_W" ] && EXTRA_PARTS+=("''${POWER_W}W")
+      [ -n "$TIME_STR" ] && EXTRA_PARTS+=("~$TIME_STR")
     fi
+
+    EXTRA_STR=""
+    for item in "''${EXTRA_PARTS[@]}"; do
+      EXTRA_STR="$EXTRA_STR · $item"
+    done
+
+    echo "<span foreground='$ICON_COLOR'>$ICON</span>  <span weight='bold' foreground='#cdd6f4'>''${CAPACITY}%</span><span size='small' foreground='#a6adc8'>$EXTRA_STR</span>"
   '';
 
   mediaTextScript = pkgs.writeShellScript "hyprlock-media-text" ''
