@@ -23,6 +23,9 @@
   programs.btop.enable = true;
   programs.yazi.enable = true;
 
+  home.file.".face".source = ./face.png;
+  home.file.".face.icon".source = ./face.png;
+
   home.persistence."/persist" = {
     directories = [
       ".cache/borg"
