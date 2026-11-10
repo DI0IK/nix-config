@@ -63,8 +63,7 @@ in
 
   home.packages = [ sandboxed.config.env ];
 
-  home.activation.createFirefoxMprisDir =
-    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p "$HOME/.local/share/firefox-mpris"
-    '';
+  home.activation.createFirefoxMprisDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD mkdir -p "$HOME/.local/share/firefox-mpris"
+  '';
 }

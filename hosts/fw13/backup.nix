@@ -33,6 +33,12 @@
       "**/steamapps/**"
       "**/.local/share/PrismLauncher/**"
       "**/PrismLauncher/**"
+
+      # Virtual machines and temporary images
+      "**/*.qcow2"
+      "**/*.iso"
+      "**/vms/**"
+      "**/.quickemu/**"
     ];
 
     repo = "ssh://u599352-sub2@u599352-sub2.your-storagebox.de:23/./fw13";

@@ -17,7 +17,9 @@ let
   sonyWebcamScript = pkgs.writeShellScriptBin "sony-webcam" ''
     set -euo pipefail
 
-    export GST_PLUGIN_SYSTEM_PATH_1_0="${pkgs.lib.makeSearchPathOutput "lib" "lib/gstreamer-1.0" gstPlugins}"
+    export GST_PLUGIN_SYSTEM_PATH_1_0="${
+      pkgs.lib.makeSearchPathOutput "lib" "lib/gstreamer-1.0" gstPlugins
+    }"
 
     # Terminate any volume monitors holding PTP lock
     pkill -f gvfs-gphoto2-volume-monitor 2>/dev/null || true
@@ -62,7 +64,10 @@ in
   # Auto-start systemd service on camera connection
   systemd.services.sony-webcam = {
     description = "Sony a6400 PipeWire Virtual Webcam Stream";
-    after = [ "network.target" "pipewire.service" ];
+    after = [
+      "network.target"
+      "pipewire.service"
+    ];
     serviceConfig = {
       Type = "simple";
       ExecStart = "${sonyWebcamScript}/bin/sony-webcam";

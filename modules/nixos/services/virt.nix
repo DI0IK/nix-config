@@ -1,5 +1,237 @@
 { config, pkgs, ... }:
 
+let
+  winSandbox = pkgs.writeShellScriptBin "win-sandbox" ''
+        set -euo pipefail
+
+        VM_BASE_DIR="/persist/vms/windows-sandbox"
+        DEFAULT_VM_CONF="$VM_BASE_DIR/windows-11.conf"
+
+        show_help() {
+          cat <<'EOF'
+    win-sandbox - Lightweight Disposable Windows Sandbox for NixOS
+
+    Commands:
+      run             Start the Windows sandbox in disposable mode.
+                      Any changes made during the session (files, extensions, etc.)
+                      are stored in temporary RAM/overlay and completely discarded on exit.
+
+      edit            Start the Windows sandbox in maintenance mode.
+                      Changes WILL be saved to the base image (use this to pre-install
+                      VS Code or run updates).
+
+      init [version|iso]
+                      Initialize the Windows sandbox.
+                      - If an ISO path is provided (e.g. `win-sandbox init ~/Downloads/Win11.iso`),
+                        it uses that ISO directly.
+                      - If a version is provided (default "11"), it attempts an automated quickget.
+
+      status          Show the status of the Windows sandbox VM and disk images.
+
+      delete          Delete the Windows sandbox VM disk and configuration to reclaim space.
+
+    Options:
+      All extra options after the command are passed directly to quickemu.
+      Example: win-sandbox run --fullscreen
+    EOF
+        }
+
+        find_vm_conf() {
+          if [ -f "$DEFAULT_VM_CONF" ]; then
+            echo "$DEFAULT_VM_CONF"
+          else
+            local conf
+            conf=$(find "$VM_BASE_DIR" -maxdepth 1 -name "*.conf" 2>/dev/null | head -n 1 || true)
+            if [ -n "$conf" ]; then
+              echo "$conf"
+            else
+              echo ""
+            fi
+          fi
+        }
+
+        ensure_iso_symlink() {
+          local conf="$1"
+          local vm_name
+          vm_name=$(basename "$conf" .conf)
+          local vm_dir="$VM_BASE_DIR/$vm_name"
+          local target_iso="$vm_dir/$vm_name.iso"
+
+          if [ ! -f "$target_iso" ]; then
+            # Check if user placed any other Windows ISO in vm_dir or VM_BASE_DIR or ~/Downloads
+            local found_iso=""
+            for search_dir in "$vm_dir" "$VM_BASE_DIR" "$HOME/Downloads"; do
+              if [ -d "$search_dir" ]; then
+                found_iso=$(find "$search_dir" -maxdepth 1 -name "*[Ww]in*.iso" ! -name "virtio-win.iso" ! -name "unattended.iso" 2>/dev/null | head -n 1 || true)
+                if [ -n "$found_iso" ] && [ -f "$found_iso" ]; then
+                  echo "Detected downloaded Windows ISO: $found_iso"
+                  ln -sf "$(realpath "$found_iso")" "$target_iso"
+                  break
+                fi
+              fi
+            done
+          fi
+        }
+
+        check_vm_ready() {
+          local conf="$1"
+          ensure_iso_symlink "$conf"
+
+          local vm_name
+          vm_name=$(basename "$conf" .conf)
+          local vm_dir="$VM_BASE_DIR/$vm_name"
+          local iso="$vm_dir/$vm_name.iso"
+          local disk="$vm_dir/disk.qcow2"
+
+          if [ ! -f "$iso" ]; then
+            local disk_size=0
+            if [ -f "$disk" ]; then
+              disk_size=$(stat -c%s "$disk" 2>/dev/null || echo 0)
+            fi
+            if [ "$disk_size" -lt 1073741824 ]; then
+              echo "Error: Installation ISO '$iso' is missing and disk has not been installed yet."
+              echo ""
+              echo "Microsoft often blocks automated script downloads on university and datacenter networks."
+              echo "To complete setup:"
+              echo "1. Download the Windows 11 ISO from your browser at: https://www.microsoft.com/en-us/software-download/windows11"
+              echo "2. Run: win-sandbox init /path/to/downloaded-windows.iso"
+              exit 1
+            fi
+          fi
+        }
+
+        mkdir -p "$VM_BASE_DIR"
+
+        CMD="''${1:-run}"
+        shift || true
+
+        case "$CMD" in
+          run)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ]; then
+              echo "Error: No Windows VM configuration found in $VM_BASE_DIR."
+              echo "Run 'win-sandbox init' first to download and prepare the Windows image."
+              exit 1
+            fi
+            check_vm_ready "$CONF"
+            echo "============================================================"
+            echo "  🚀 Starting Disposable Windows Session (--status-quo)     "
+            echo "  Changes will NOT be saved to disk upon closing.          "
+            echo "============================================================"
+            exec ${pkgs.quickemu}/bin/quickemu --vm "$CONF" --status-quo "$@"
+            ;;
+
+          edit)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ]; then
+              echo "Error: No Windows VM configuration found in $VM_BASE_DIR."
+              echo "Run 'win-sandbox init' first to download and prepare the Windows image."
+              exit 1
+            fi
+            check_vm_ready "$CONF"
+            echo "============================================================"
+            echo "  ⚠️  Starting Maintenance Windows Session                  "
+            echo "  Changes WILL be saved to the base disk.                   "
+            echo "============================================================"
+            exec ${pkgs.quickemu}/bin/quickemu --vm "$CONF" "$@"
+            ;;
+
+          init)
+            ARG="''${1:-11}"
+            shift || true
+
+            if [ -f "$ARG" ] && [[ "$ARG" == *.iso ]]; then
+              echo "Initializing Windows VM using provided ISO: $ARG..."
+              cd "$VM_BASE_DIR"
+              ${pkgs.quickemu}/bin/quickget windows 11 "$@" || true
+              mkdir -p "$VM_BASE_DIR/windows-11"
+              ln -sf "$(realpath "$ARG")" "$VM_BASE_DIR/windows-11/windows-11.iso"
+              echo "Linked $ARG -> $VM_BASE_DIR/windows-11/windows-11.iso"
+            else
+              VERSION="$ARG"
+              echo "Initializing Windows $VERSION in $VM_BASE_DIR..."
+              cd "$VM_BASE_DIR"
+              ${pkgs.quickemu}/bin/quickget windows "$VERSION" "$@" || true
+              conf="windows-$VERSION.conf"
+              iso="windows-$VERSION/windows-$VERSION.iso"
+              if [ -f "$conf" ]; then
+                ensure_iso_symlink "$conf"
+              fi
+              if [ ! -f "$iso" ]; then
+                echo ""
+                echo "=========================================================================="
+                echo "  NOTE: Microsoft blocked the automated download request via Sentinel.   "
+                echo "  This is normal for university / datacenter IP addresses.                "
+                echo ""
+                echo "  To finish:"
+                echo "  1. Download Windows 11 ISO in your browser:                            "
+                echo "     https://www.microsoft.com/en-us/software-download/windows11          "
+                echo "  2. Run:                                                                 "
+                echo "     win-sandbox init /path/to/downloaded.iso                            "
+                echo "=========================================================================="
+                exit 1
+              fi
+            fi
+            echo ""
+            echo "Initialization complete!"
+            echo "1. Run 'win-sandbox edit' to complete the automated Windows install and install VS Code."
+            echo "2. Once ready, shut down the VM, and use 'win-sandbox run' for disposable lecture sessions!"
+            ;;
+
+          status)
+            echo "Sandbox directory: $VM_BASE_DIR"
+            CONF=$(find_vm_conf)
+            if [ -n "$CONF" ]; then
+              echo "Config: $CONF"
+              ${pkgs.quickemu}/bin/quickemu --vm "$CONF" --snapshot info || true
+              echo "Disk usage:"
+              du -sh "$VM_BASE_DIR" 2>/dev/null || true
+            else
+              echo "Status: Not initialized. Run 'win-sandbox init' to set up."
+            fi
+            ;;
+
+          delete)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ]; then
+              echo "No VM found in $VM_BASE_DIR."
+              exit 0
+            fi
+            read -rp "Are you sure you want to delete the Windows VM in $VM_BASE_DIR? [y/N] " confirm
+            if [[ "$confirm" =~ ^[Yy]$ ]]; then
+              cd "$VM_BASE_DIR"
+              ${pkgs.quickemu}/bin/quickemu --vm "$CONF" --delete-vm || true
+              rm -rf "$VM_BASE_DIR"
+              echo "Deleted."
+            else
+              echo "Aborted."
+            fi
+            ;;
+
+          help|-h|--help)
+            show_help
+            ;;
+
+          *)
+            echo "Unknown command: $CMD"
+            show_help
+            exit 1
+            ;;
+        esac
+  '';
+
+  winSandboxDesktop = pkgs.makeDesktopItem {
+    name = "win-sandbox";
+    desktopName = "Windows Sandbox (Disposable)";
+    comment = "Launch a lightweight, disposable Windows environment";
+    icon = "distributor-logo-windows";
+    exec = "${winSandbox}/bin/win-sandbox run";
+    categories = [
+      "System"
+      "Utility"
+    ];
+  };
+in
 {
   # Enable libvirtd daemon
   virtualisation.libvirtd = {
@@ -11,13 +243,29 @@
     firewallBackend = "nftables";
   };
 
-  # Install virt-manager (the GUI)
+  # Ignore unhandled MSRs on AMD KVM for Windows guests
+  boot.extraModprobeConfig = ''
+    options kvm ignore_msrs=1
+    options kvm_amd ignore_msrs=1
+  '';
+
+  # Install virtualization tools and disposable Windows sandbox helper
   environment.systemPackages = with pkgs; [
     virt-manager
+    quickemu
+    spice-gtk
+    winSandbox
+    winSandboxDesktop
   ];
 
   # Manage nested virtualization or specific spice protocols (Optional but recommended)
   virtualisation.spiceUSBRedirection.enable = true;
+
+  # Subvolume for VM images: nested subvolume to automatically exclude from btrbk snapshots, with No_COW (+C)
+  systemd.tmpfiles.rules = [
+    "v /persist/vms 0775 dominik users - -"
+    "h /persist/vms - - - - +C"
+  ];
 
   environment.persistence."/persist".directories = [
     "/var/lib/libvirt"

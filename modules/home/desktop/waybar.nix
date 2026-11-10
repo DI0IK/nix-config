@@ -131,10 +131,14 @@
           "format-charging" = "<span color='${theme.teal}'>󰂄</span> {capacity}%";
           "format-plugged" = "<span color='${theme.teal}'>󱟢</span> {capacity}%";
           "format-alt" = "<span color='${theme.green}'>{icon}</span> {time}";
-          "tooltip-format" = "<b>Battery</b>: {capacity}%\n<b>Health</b>: {health}% ({cycles} cycles)\n<b>Power</b>: {power:.1f}W\n<b>Time</b>: {time}";
-          "tooltip-format-charging" = "<span color='${theme.teal}'><b>Charging</b></span>: +{power:.1f}W\n<b>Time to full</b>: {time}\n<b>Health</b>: {health}% ({cycles} cycles)";
-          "tooltip-format-discharging" = "<span color='${theme.peach}'><b>Discharging</b></span>: -{power:.1f}W\n<b>Remaining</b>: {time}\n<b>Health</b>: {health}% ({cycles} cycles)";
-          "tooltip-format-full" = "<span color='${theme.green}'><b>Full</b></span> (Plugged in)\n<b>Health</b>: {health}% ({cycles} cycles)";
+          "tooltip-format" =
+            "<b>Battery</b>: {capacity}%\n<b>Health</b>: {health}% ({cycles} cycles)\n<b>Power</b>: {power:.1f}W\n<b>Time</b>: {time}";
+          "tooltip-format-charging" =
+            "<span color='${theme.teal}'><b>Charging</b></span>: +{power:.1f}W\n<b>Time to full</b>: {time}\n<b>Health</b>: {health}% ({cycles} cycles)";
+          "tooltip-format-discharging" =
+            "<span color='${theme.peach}'><b>Discharging</b></span>: -{power:.1f}W\n<b>Remaining</b>: {time}\n<b>Health</b>: {health}% ({cycles} cycles)";
+          "tooltip-format-full" =
+            "<span color='${theme.green}'><b>Full</b></span> (Plugged in)\n<b>Health</b>: {health}% ({cycles} cycles)";
           "format-icons" = [
             "󰁺"
             "󰁻"

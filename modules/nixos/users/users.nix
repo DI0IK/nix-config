@@ -11,6 +11,8 @@
       "podman"
       "video"
       "camera"
+      "libvirtd"
+      "kvm"
     ];
     hashedPasswordFile = config.sops.secrets.dominik-password.path;
   };
