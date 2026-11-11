@@ -19,13 +19,13 @@
 
     shellAliases = {
       sudo = "run0";
-      ls = "eza --icons";
-      ll = "eza -l --icons --git";
-      la = "eza -la --icons --git";
-      tree = "eza --tree --icons";
+      ls = "eza --icons=auto";
+      ll = "eza -l --icons=auto --git";
+      la = "eza -la --icons=auto --git";
+      tree = "eza --tree --icons=auto";
       cat = "bat --paging=never";
       lg = "lazygit";
-      rebuild = "nh os switch . -- --flake .#fw13";
+      rebuild = "nh os switch /persist/nix-config";
     };
   };
 
