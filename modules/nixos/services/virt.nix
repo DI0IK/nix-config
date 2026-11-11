@@ -7,6 +7,9 @@ let
         VM_BASE_DIR="/persist/vms/windows-sandbox"
         DEFAULT_VM_CONF="$VM_BASE_DIR/windows-11.conf"
 
+        export TMPDIR="$VM_BASE_DIR/tmp"
+        mkdir -p "$TMPDIR"
+
         show_help() {
           cat <<'EOF'
     win-sandbox - Lightweight Disposable Windows Sandbox for NixOS
@@ -19,6 +22,14 @@ let
       edit            Start the Windows sandbox in maintenance mode.
                       Changes WILL be saved to the base image (use this to pre-install
                       VS Code or run updates).
+
+      pause           Pause the currently running Windows sandbox VM.
+                      (You can safely close the SPICE viewer window while paused).
+
+      resume          Resume (unpause) the paused Windows sandbox VM and
+                      reopen the viewer if it was closed.
+
+      view            Reopen the SPICE viewer window for a running sandbox VM.
 
       init [version|iso]
                       Initialize the Windows sandbox.
@@ -73,9 +84,89 @@ let
           fi
         }
 
+        ensure_spice_display() {
+          local conf="$1"
+          if [ -f "$conf" ] && ! grep -q "^display=" "$conf"; then
+            echo 'display="spice"' >> "$conf"
+          fi
+        }
+
+        is_vm_running() {
+          local conf="$1"
+          local vm_name
+          vm_name=$(basename "$conf" .conf)
+          local vm_dir="$VM_BASE_DIR/$vm_name"
+          local pid_file="$vm_dir/$vm_name.pid"
+          if [ -f "$pid_file" ]; then
+            local pid
+            pid=$(head -n 1 "$pid_file" 2>/dev/null || echo "")
+            if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+              return 0
+            fi
+          fi
+          return 1
+        }
+
+        is_viewer_running() {
+          local conf="$1"
+          local vm_name
+          vm_name=$(basename "$conf" .conf)
+          pgrep -f "spicy.*$vm_name" >/dev/null 2>&1
+        }
+
+        launch_viewer() {
+          local conf="$1"
+          local vm_name
+          vm_name=$(basename "$conf" .conf)
+          local vm_dir="$VM_BASE_DIR/$vm_name"
+          local sock="$vm_dir/$vm_name.sock"
+          if [ -S "$sock" ]; then
+            ${pkgs.spice-gtk}/bin/spicy --uri="spice+unix://$sock" --title "$vm_name" --spice-shared-dir "$HOME" >/dev/null 2>&1 &
+          fi
+        }
+
+        send_monitor_cmd() {
+          local conf="$1"
+          local cmd="$2"
+          local vm_name
+          vm_name=$(basename "$conf" .conf)
+          local monitor_sock="$VM_BASE_DIR/$vm_name/$vm_name-monitor.socket"
+          if [ -S "$monitor_sock" ]; then
+            echo "$cmd" | ${pkgs.socat}/bin/socat -,shut-down UNIX-CONNECT:"$monitor_sock" >/dev/null 2>&1
+          else
+            echo "Error: Monitor socket not found."
+            return 1
+          fi
+        }
+
+        get_vm_status() {
+          local conf="$1"
+          if [ -n "$conf" ] && is_vm_running "$conf"; then
+            local vm_name
+            vm_name=$(basename "$conf" .conf)
+            local monitor_sock="$VM_BASE_DIR/$vm_name/$vm_name-monitor.socket"
+            if [ -S "$monitor_sock" ]; then
+              local stat_line
+              stat_line=$(echo "info status" | ${pkgs.socat}/bin/socat -,shut-down UNIX-CONNECT:"$monitor_sock" 2>/dev/null | grep "VM status:" || true)
+              if [[ "$stat_line" =~ "paused" ]]; then
+                echo "paused"
+                return 0
+              else
+                echo "running"
+                return 0
+              fi
+            else
+              echo "running"
+              return 0
+            fi
+          fi
+          echo "stopped"
+        }
+
         check_vm_ready() {
           local conf="$1"
           ensure_iso_symlink "$conf"
+          ensure_spice_display "$conf"
 
           local vm_name
           vm_name=$(basename "$conf" .conf)
@@ -114,6 +205,16 @@ let
               exit 1
             fi
             check_vm_ready "$CONF"
+            if is_vm_running "$CONF"; then
+              echo "Windows sandbox VM is already running."
+              if ! is_viewer_running "$CONF"; then
+                echo "Reopening SPICE viewer..."
+                launch_viewer "$CONF"
+              else
+                echo "SPICE viewer is already open."
+              fi
+              exit 0
+            fi
             echo "============================================================"
             echo "  🚀 Starting Disposable Windows Session (--status-quo)     "
             echo "  Changes will NOT be saved to disk upon closing.          "
@@ -134,6 +235,102 @@ let
             echo "  Changes WILL be saved to the base disk.                   "
             echo "============================================================"
             exec ${pkgs.quickemu}/bin/quickemu --vm "$CONF" "$@"
+            ;;
+
+          pause)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ]; then
+              echo "Error: No Windows VM configuration found in $VM_BASE_DIR."
+              exit 1
+            fi
+            if ! is_vm_running "$CONF"; then
+              echo "Error: Windows sandbox VM is not currently running."
+              exit 1
+            fi
+            echo "Pausing Windows sandbox VM..."
+            send_monitor_cmd "$CONF" "stop"
+            echo "Windows sandbox VM paused."
+            ;;
+
+          resume|unpause)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ]; then
+              echo "Error: No Windows VM configuration found in $VM_BASE_DIR."
+              exit 1
+            fi
+            if ! is_vm_running "$CONF"; then
+              echo "Error: Windows sandbox VM is not currently running."
+              exit 1
+            fi
+            echo "Resuming Windows sandbox VM..."
+            send_monitor_cmd "$CONF" "cont"
+            echo "Windows sandbox VM resumed."
+            if ! is_viewer_running "$CONF"; then
+              echo "Reopening SPICE viewer..."
+              launch_viewer "$CONF"
+            fi
+            ;;
+
+          view|reopen|show)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ]; then
+              echo "Error: No Windows VM configuration found in $VM_BASE_DIR."
+              exit 1
+            fi
+            if ! is_vm_running "$CONF"; then
+              echo "Error: Windows sandbox VM is not currently running."
+              exit 1
+            fi
+            if is_viewer_running "$CONF"; then
+              echo "SPICE viewer is already open."
+            else
+              echo "Opening SPICE viewer..."
+              launch_viewer "$CONF"
+            fi
+            ;;
+
+          toggle-pause)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ] || ! is_vm_running "$CONF"; then
+              echo "Error: Windows sandbox VM is not currently running."
+              exit 1
+            fi
+            CURRENT_STATUS=$(get_vm_status "$CONF")
+            if [ "$CURRENT_STATUS" = "paused" ]; then
+              echo "Resuming Windows sandbox VM..."
+              send_monitor_cmd "$CONF" "cont"
+              if ! is_viewer_running "$CONF"; then
+                launch_viewer "$CONF"
+              fi
+            else
+              echo "Pausing Windows sandbox VM..."
+              send_monitor_cmd "$CONF" "stop"
+            fi
+            ;;
+
+          status-brief)
+            CONF=$(find_vm_conf)
+            get_vm_status "$CONF"
+            exit 0
+            ;;
+
+          powerdown|shutdown)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ] || ! is_vm_running "$CONF"; then
+              echo "Error: Windows sandbox VM is not currently running."
+              exit 1
+            fi
+            echo "Sending ACPI shutdown signal..."
+            send_monitor_cmd "$CONF" "system_powerdown"
+            ;;
+
+          kill)
+            CONF=$(find_vm_conf)
+            if [ -z "$CONF" ]; then
+              echo "Error: No Windows VM configuration found in $VM_BASE_DIR."
+              exit 1
+            fi
+            ${pkgs.quickemu}/bin/quickemu --vm "$CONF" --kill || true
             ;;
 
           init)
@@ -183,6 +380,7 @@ let
             CONF=$(find_vm_conf)
             if [ -n "$CONF" ]; then
               echo "Config: $CONF"
+              echo "VM Status: $(get_vm_status "$CONF")"
               ${pkgs.quickemu}/bin/quickemu --vm "$CONF" --snapshot info || true
               echo "Disk usage:"
               du -sh "$VM_BASE_DIR" 2>/dev/null || true

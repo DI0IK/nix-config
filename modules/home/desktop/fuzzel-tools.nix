@@ -122,6 +122,7 @@ let
     Super + Shift + V            Emergency clipboard wipe
     Super + B                    Quick Bluetooth device selector
     Super + W                    Quick Wi-Fi network selector
+    Super + Shift + W            Windows Sandbox control menu
     Super + C                    Open live interactive calculator (qalc)
     Super + I                    Open this keybinding cheat sheet
     Super + A                    Toggle audio output (Speakers ⇄ Headphones)
@@ -165,6 +166,78 @@ let
     fi
     ${pkgs.libnotify}/bin/notify-send "Audio Output" "Only one audio output detected" -i audio-speakers -u low
   '';
+  fuzzelWinSandbox = pkgs.writeShellScriptBin "fuzzel-win-sandbox" ''
+    set -euo pipefail
+
+    STATUS=$(win-sandbox status-brief 2>/dev/null || echo "stopped")
+
+    case "$STATUS" in
+      running)
+        PROMPT="󰖳 Windows (Running): "
+        MENU="⏸️ Pause VM\n🖥️ Focus / Show Viewer\n🛑 Power Off\n⚡ Force Kill\nℹ️ VM Status & Info"
+        ;;
+      paused)
+        PROMPT="󰖳 Windows (Paused): "
+        MENU="▶️ Resume VM\n🖥️ Show Viewer\n⚡ Force Kill\nℹ️ VM Status & Info"
+        ;;
+      *)
+        PROMPT="󰖳 Windows (Stopped): "
+        MENU="🚀 Start Disposable Session\n🛠️ Maintenance Mode (Save Changes)\nℹ️ VM Status & Info"
+        ;;
+    esac
+
+    CHOSEN=$(echo -e "$MENU" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="$PROMPT" --placeholder="Select Windows Sandbox action..." -w 45 || true)
+    [ -z "$CHOSEN" ] && exit 0
+
+    case "$CHOSEN" in
+      *"Start Disposable Session"*)
+        uwsm app -- win-sandbox run &
+        ;;
+      *"Maintenance Mode"*)
+        uwsm app -- win-sandbox edit &
+        ;;
+      *"Pause VM"*)
+        win-sandbox pause
+        ${pkgs.libnotify}/bin/notify-send "Windows Sandbox" "VM execution paused" -i media-playback-pause
+        ;;
+      *"Resume VM"*)
+        win-sandbox resume
+        ${pkgs.libnotify}/bin/notify-send "Windows Sandbox" "VM execution resumed" -i media-playback-start
+        ;;
+      *"Focus / Show Viewer"*|*"Show Viewer"*)
+        win-sandbox view
+        ;;
+      *"Power Off"*)
+        win-sandbox powerdown
+        ${pkgs.libnotify}/bin/notify-send "Windows Sandbox" "Sent shutdown signal to Windows" -i system-shutdown
+        ;;
+      *"Force Kill"*)
+        win-sandbox kill
+        ${pkgs.libnotify}/bin/notify-send "Windows Sandbox" "VM terminated" -i process-stop -u critical
+        ;;
+      *"VM Status & Info"*)
+        win-sandbox status | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="󰖳 Info: " -w 60 >/dev/null || true
+        ;;
+    esac
+  '';
+
+  waybarWinSandbox = pkgs.writeShellScriptBin "waybar-win-sandbox" ''
+    set -euo pipefail
+
+    STATUS=$(win-sandbox status-brief 2>/dev/null || echo "stopped")
+
+    case "$STATUS" in
+      running)
+        echo '{"text":"󰖳","class":"running","tooltip":"Windows Sandbox: Running\n• Left-click: Pause\n• Right-click: Menu\n• Middle-click: Focus Viewer"}'
+        ;;
+      paused)
+        echo '{"text":"󰏤","class":"paused","tooltip":"Windows Sandbox: Paused\n• Left-click: Resume\n• Right-click: Menu\n• Middle-click: Focus Viewer"}'
+        ;;
+      *)
+        echo '{"text":""}'
+        ;;
+    esac
+  '';
 in
 {
   home.packages = with pkgs; [
@@ -173,6 +246,8 @@ in
     fuzzelBluetooth
     fuzzelWifi
     fuzzelKeybinds
+    fuzzelWinSandbox
+    waybarWinSandbox
     audioSinkToggle
   ];
 }

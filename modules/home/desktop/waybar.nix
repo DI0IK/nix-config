@@ -36,6 +36,7 @@
           "power-profiles-daemon"
           "idle_inhibitor"
           "privacy"
+          "custom/windows-sandbox"
           "custom/notification"
           "tray"
         ];
@@ -151,6 +152,17 @@
             "󰂂"
             "󰁹"
           ];
+        };
+
+        "custom/windows-sandbox" = {
+          format = "{}";
+          "return-type" = "json";
+          interval = 2;
+          exec = "waybar-win-sandbox";
+          "on-click" = "win-sandbox toggle-pause";
+          "on-click-right" = "uwsm app -- fuzzel-win-sandbox";
+          "on-click-middle" = "win-sandbox view";
+          tooltip = true;
         };
 
         "custom/notification" = {
@@ -494,6 +506,20 @@
           to {
               color: @maroon;
           }
+      }
+
+      /* Windows Sandbox */
+      #custom-windows-sandbox {
+          padding: 0 4px;
+          margin: 2px 2px;
+      }
+
+      #custom-windows-sandbox.running {
+          color: @blue;
+      }
+
+      #custom-windows-sandbox.paused {
+          color: @yellow;
       }
 
       /* Tray */

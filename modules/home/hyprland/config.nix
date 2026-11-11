@@ -186,6 +186,7 @@
       hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("uwsm app -- kitty --class=spotify-player -e spotify_player"))
       hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd("uwsm app -- fuzzel-bluetooth"))
       hl.bind(mainMod .. " + W",         hl.dsp.exec_cmd("uwsm app -- fuzzel-wifi"))
+      hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("uwsm app -- fuzzel-win-sandbox"))
 
       -- Clipboard History (Secure In-Memory Fuzzel UI)
       hl.bind(mainMod .. " + V",         hl.dsp.exec_cmd("uwsm app -- cliphist-fuzzel"))
