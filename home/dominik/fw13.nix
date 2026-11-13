@@ -62,6 +62,7 @@
       ".dsh"
       ".config/zed"
       ".local/share/zed"
+      ".local/share/antigravity"
     ];
 
   };

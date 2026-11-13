@@ -12,6 +12,9 @@
 
   services.blueman.enable = true;
 
+  # Needed for HFP/HSP (headset microphone) when security.lockKernelModules is enabled
+  boot.kernelModules = [ "rfcomm" ];
+
   environment.persistence."/persist".directories = [
     "/var/lib/bluetooth/"
   ];

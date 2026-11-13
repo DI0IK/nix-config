@@ -3,6 +3,7 @@
   stdenv,
   fetchurl,
   buildFHSEnv,
+  cacert,
   writeShellScript,
   coreutils,
   gawk,
@@ -251,6 +252,7 @@ stdenv.mkDerivation (finalAttrs: {
             "--bind-try /etc/nixos/ /etc/nixos/"
             "--ro-bind-try /etc/xdg/ /etc/xdg/"
             "--tmpfs /opt/google/chrome"
+            "--symlink ${cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/cert.pem"
           ];
 
           extraBuildCommands = ''
