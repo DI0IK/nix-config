@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+let
+  google-colab-cli = pkgs.python3Packages.callPackage ./google-colab-cli/package.nix { };
+in
+{
   programs.nix-index.enable = true;
   programs.nix-index-database.comma.enable = true;
 
@@ -38,5 +42,18 @@
     httpie
     unzip
     zip
+
+    # Git
+    gh
+    glab
+
+    # Cloud / Notebooks
+    google-colab-cli
+  ];
+
+  home.persistence."/persist".directories = [
+    ".config/gh"
+    ".config/glab-cli"
+    ".config/colab-cli"
   ];
 }

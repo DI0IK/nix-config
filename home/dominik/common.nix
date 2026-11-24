@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, inputs, ... }: {
   imports = [
     ../../modules/home/base.nix
     ../../modules/home/development/git.nix
@@ -31,6 +31,8 @@
       ".cache/borg"
       ".config/sops"
       ".local/share/containers"
+      ".local/share/keyrings"
+      ".local/state/cut-rs"
     ];
 
     files = [
@@ -40,5 +42,6 @@
 
   home.packages = with pkgs; [
     sops
+    inputs.cut-rs.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

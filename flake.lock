@@ -35,6 +35,26 @@
         "type": "github"
       }
     },
+    "cut-rs": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795212708,
+        "narHash": "sha256-ZShVEAN/Of1r8txJ0JRY1y1oSV4Eng4H69RGpB06hAE=",
+        "owner": "DI0IK",
+        "repo": "cut-rs",
+        "rev": "c8231aee20a99a86c1d24c095211350cbb94329e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "DI0IK",
+        "repo": "cut-rs",
+        "type": "github"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -62,11 +82,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795460389,
-        "narHash": "sha256-ivBPDv9c2puFEbU8v8lV151nn+p4td3SfEB7PID4ns0=",
+        "lastModified": 1795513313,
+        "narHash": "sha256-QuRKOr1yg/QcE6QMimpchqVcSr26CJCeeKv5YYwhvZ4=",
         "owner": "malbiruk",
         "repo": "driftwm",
-        "rev": "47c6dfc2b0368a2d05be81c91097264c1eb609e3",
+        "rev": "8ee566f80bf7f19c0c1e0efe781b24f8d6243168",
         "type": "github"
       },
       "original": {
@@ -288,11 +308,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795018746,
-        "narHash": "sha256-glQAHvZGgBVjzGIWgIZYSf3X10gvtO2LPR4rtyP/Soc=",
+        "lastModified": 1795505195,
+        "narHash": "sha256-HoBMYHQYxai9NTe3ED6MrZwo2S56ocxgMwTgwmybjJM=",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "33475966110df258f52d05ec4d4cd6394637cbb9",
+        "rev": "ff49dbf39553717ac8e0f4d5085fa0ca10c1031f",
         "type": "github"
       },
       "original": {
@@ -364,6 +384,7 @@
     "root": {
       "inputs": {
         "catppuccin-nix": "catppuccin-nix",
+        "cut-rs": "cut-rs",
         "disko": "disko",
         "driftwm": "driftwm",
         "home-manager": "home-manager",

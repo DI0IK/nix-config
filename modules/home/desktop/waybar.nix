@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   theme ? import ../../shared/theme.nix,
   ...
 }:
@@ -26,6 +27,7 @@
           "clock"
         ];
         "modules-right" = [
+          "custom/antigravity"
           "cpu"
           "memory"
           "temperature"
@@ -40,6 +42,14 @@
           "custom/notification"
           "tray"
         ];
+
+        "custom/antigravity" = {
+          exec = "${inputs.cut-rs.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/cut-rs waybar";
+          return-type = "json";
+          interval = 10;
+          format = "󰚩 {}";
+          tooltip = true;
+        };
 
         "hyprland/workspaces" = {
           "disable-scroll" = true;
@@ -433,7 +443,8 @@
       #custom-weather,
       #custom-kernel,
       #custom-timetracker,
-      #custom-android_extend {
+      #custom-android_extend,
+      #custom-antigravity {
           padding: 1px 4px;
           margin: 1px 0px;
           border-radius: 5px;
@@ -453,7 +464,8 @@
       #power-profiles-daemon:hover,
       #idle_inhibitor:hover,
       #custom-notification:hover,
-      #clock:hover {
+      #clock:hover,
+      #custom-antigravity {
           background-color: alpha(@surface0, 0.6);
       }
 
@@ -520,6 +532,22 @@
 
       #custom-windows-sandbox.paused {
           color: @yellow;
+      }
+
+      #custom-antigravity.normal,
+      #custom-antigravity.ok {
+        color: @green;
+      }
+      #custom-antigravity.warning {
+        color: @yellow;
+      }
+      #custom-antigravity.critical {
+        color: @red;
+        font-weight: bold;
+      }
+      #custom-antigravity.offline,
+      #custom-antigravity.unknown {
+        color: @overlay0;
       }
 
       /* Tray */

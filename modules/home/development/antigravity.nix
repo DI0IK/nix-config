@@ -1,10 +1,8 @@
 { pkgs, ... }:
 let
-  # Antigravity App 2.31.2 - local package using callPackage
-  antigravity-2_31_2 = pkgs.callPackage ./antigravity/package.nix { };
+  # Antigravity App 2.33.0 - local package using callPackage
+  antigravity-2_33_0 = pkgs.callPackage ./antigravity/package.nix { };
 in
 {
-  home.packages = with pkgs; [
-    antigravity-2_31_2.passthru.fhs
-  ];
+  home.packages = [ antigravity-2_33_0 pkgs.antigravity-cli ];
 }
